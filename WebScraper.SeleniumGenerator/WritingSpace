@@ -1,0 +1,4 @@
+﻿dotnet ef migrations add InitialCreate --project WebScraper.DAL --startup-project WebScraper
+dotnet ef database update --project WebScraper.DAL --startup-project WebScraper
+dotnet ef database drop --project WebScraper.DAL --startup-project WebScraper
+

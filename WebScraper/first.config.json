@@ -1,0 +1,24 @@
+﻿{
+  "url": "https://refactoring.guru/design-patterns/command",
+  "loop": false,
+  "commands": [
+    {
+      "Click": {
+        "args": [
+          {
+            "path": "//a[contains(text(),'What is a Pattern')]"
+          }
+        ]
+      }
+    },
+    {
+      "Text": {
+        "args": [
+          {
+            "path": "//h2[contains(.,'What does the pattern consist of?')]"
+          }
+        ]
+      }
+    }
+  ]
+}
