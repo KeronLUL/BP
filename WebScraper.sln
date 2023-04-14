@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScraper", "WebScraper\WebScraper.csproj", "{B3088F7D-3432-4E2C-B94D-CD783DB2D373}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScraper.DAL", "WebScraper.DAL\WebScraper.DAL.csproj", "{82E64159-D7B0-4F33-95B0-706972005CC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScraper.Database", "WebScraper.Database\WebScraper.Database.csproj", "{82E64159-D7B0-4F33-95B0-706972005CC4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScraper.SeleniumGenerator", "WebScraper.SeleniumGenerator\WebScraper.SeleniumGenerator.csproj", "{9E3B158D-8F8A-4406-A740-A9A0A2755176}"
 EndProject

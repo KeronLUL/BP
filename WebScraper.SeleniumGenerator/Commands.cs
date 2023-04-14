@@ -33,17 +33,17 @@ namespace SeleniumCommands
         }}
     }}
 
-    public class Text : ICommand
+    public class SaveText : ICommand
     {{
-        public static string Get(String path)
+        public static string Get(String path, String name)
         {{
             return SeleniumGenerated.SeleniumWebDriver.Driver.FindElement(By.XPath(path)).Text;
         }}
     }}
 
-    public class Attribute : ICommand
+    public class SaveAttribute : ICommand
     {{
-        public static string Get(String path, String attribute)
+        public static string Get(String path, String attribute, String name)
         {{
             return SeleniumGenerated.SeleniumWebDriver.Driver.FindElement(By.XPath(path)).GetAttribute(attribute);
         }}

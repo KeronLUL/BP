@@ -1,16 +1,31 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
+using OpenQA.Selenium;
 using SeleniumGenerated;
 using WebScraper.Arguments;
+using WebScraper.Database.Entities;
+using WebScraper.Database.EntityCreator;
+using WebScraper.Database.Facades;
+using WebScraper.EntityHandlers;
 using WebScraper.Json.Entities;
 
 namespace WebScraper;
 
-public static class Scraper
+public class Scraper
 {
-    public static int Run(Config? config)
+    public async void Run(Config? config)
     {
-        SeleniumWebDriver.SetUp(config!.url, config!.driver != null ? config!.driver : "Firefox");
+        try
+        {
+            SeleniumWebDriver.SetUp(config!.url, config!.driver != null ? config!.driver : "Firefox");
+        }
+        catch (WebDriverArgumentException)
+        {
+            await Console.Error.WriteLineAsync($@"Can't connect to URL: '{config!.url}'");
+            throw;
+        }
+
+        var website = CreateOrRetrieveWebsite.CreateOrRetrieve(config);
 
         do
         {
@@ -20,29 +35,33 @@ public static class Scraper
                 {
                     if (!Object.CheckObject(command, commandProperty))
                         continue;
-
+        
                     var assembly = Assembly.GetExecutingAssembly().GetTypes();
                     var method = assembly.Where(name => name.FullName == $@"SeleniumCommands.{commandProperty.Name}").ToArray()[0].GetMethods()[0];
                     var parameters = method.GetParameters();
-
+        
                     var parameterObject = new object?[parameters.Length];
                 
-                    for (int k = 0; k < parameterObject.Length; k++)
+                    for (int index = 0; index < parameterObject.Length; index++)
                     {
-                        parameterObject[k] = Object.GetParameter(command, commandProperty, parameters[k]);
+                        parameterObject[index] = Object.GetParameter(command, commandProperty, parameters[index]);
                     }
                     
-                    var str = "";
-                    try //idk man
+                    var value = "";
+                    try
                     {
-                        str = (string)method?.Invoke(Activator.CreateInstance(assembly[0]), parameterObject)!;
+                        value = (string)method?.Invoke(Activator.CreateInstance(assembly[0]), parameterObject)!;
                     }
-                    catch (Exception e)
+                    catch(Exception)
                     {
-                        Console.WriteLine(e);
-                        method?.Invoke(Activator.CreateInstance(assembly[0]), parameterObject);
+                        await Console.Error.WriteLineAsync($@"Exception has been thrown when executing command: '{commandProperty.Name}' with XPath: '{parameterObject[0]}'");
+                        throw;
                     }
-                    Console.WriteLine(str);
+
+                    if (commandProperty.Name == "SaveText")
+                    {
+                        CreateOrRetrieveElement.CreateOrRetrieve(website, command!.SaveText!.args![0].name, value);
+                    }// attribute save
                 }
             }
             
@@ -50,6 +69,5 @@ public static class Scraper
         } while (config.loop);
         
         SeleniumWebDriver.Quit();
-        return 0;
     }
 }

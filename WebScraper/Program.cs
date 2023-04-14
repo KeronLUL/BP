@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using SeleniumGenerated;
 using WebScraper.Json;
 using WebScraper.Arguments;
 using WebScraper.Json.Entities;
 
 namespace WebScraper
 {
-    internal abstract class Program
+    internal static class Program
     {
         private static int Main(string[] args)
         {
@@ -13,18 +14,18 @@ namespace WebScraper
             {
                 Args.ParseArguments(args);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.Error.WriteLine(e);
+                Console.Error.WriteLine(@"Argument parsing failed");
                 return 1;
             }
 
-            if (!File.Exists("WebScraper/config.schema.json"))
+            if (!File.Exists("config.schema.json"))
             {
-                JsonGenerator.GenerateJson("WebScraper/config.schema.json");
+                JsonGenerator.GenerateJson("config.schema.json");
             }
-            
-            if (!JsonValidator.Validate("WebScraper/config.schema.json", Args.GetFilename()))
+
+            if (!JsonValidator.Validate("config.schema.json", Args.GetFilename()))
             {
                 Console.WriteLine("Config file is not valid");
                 return 1;
@@ -35,23 +36,24 @@ namespace WebScraper
             {
                 config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Args.GetFilename()));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.Error.WriteLine(e);
+                Console.Error.WriteLine($@"Failed to deserialize JSON from file: '{Args.GetFilename()}");
                 return 1;
             }
-
+            
             try
             {
-                Scraper.Run(config);
+                var scraper = new Scraper();
+                scraper.Run(config);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.Error.WriteLine(e);
+                SeleniumWebDriver.Quit();
                 return 1;
             }
-
-            return 0;
+            
+            return 1;
         }
     }
 }

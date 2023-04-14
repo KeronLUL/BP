@@ -1,4 +1,4 @@
-﻿dotnet ef migrations add InitialCreate --project WebScraper.DAL --startup-project WebScraper
-dotnet ef database update --project WebScraper.DAL --startup-project WebScraper
-dotnet ef database drop --project WebScraper.DAL --startup-project WebScraper
+﻿dotnet ef migrations add InitialCreate --context WebScraperDbContext --project ..\WebScraper.Database
+dotnet ef database update --context WebScraperDbContext --project ..\WebScraper.Database
+dotnet ef database drop --context WebScraperDbContext --project ..\WebScraper.Database
 

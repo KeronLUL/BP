@@ -4,7 +4,7 @@ using WebScraper.Arguments;
 
 namespace WebScraper.Json;
 
-public class JsonValidator
+public static class JsonValidator
 {
     public static bool Validate(string pathToSchema, string pathToConfig)
     {
@@ -22,9 +22,9 @@ public class JsonValidator
         
             return jsonConfig.IsValid(jsonSchema);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Console.Error.WriteLine(e);
+            Console.Error.WriteLine("Parsing of JSON config has failed");
             return false;
         }
     }

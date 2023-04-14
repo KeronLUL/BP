@@ -36,7 +36,7 @@
              },
              "additionalProperties": false
            },
-           "Text": {
+           "SaveText": {
              "type": "object",
              "properties": {
                "args": {
@@ -46,16 +46,19 @@
                    "properties": {
                      "path": {
                        "type": "string"
+                     },
+                     "name": {
+                       "type": "string"
                      }
                    }
                  },
                  "additionalProperties": false,
-                 "minProperties": 1
+                 "minProperties": 2
                }
              },
              "additionalProperties": false
            },
-           "Attribute": {
+           "SaveAttribute": {
              "type": "object",
              "properties": {
                "args": {
@@ -68,11 +71,14 @@
                      },
                      "attribute": {
                        "type": "string"
+                     },
+                     "name": {
+                       "type": "string"
                      }
                    }
                  },
                  "additionalProperties": false,
-                 "minProperties": 2
+                 "minProperties": 3
                }
              },
              "additionalProperties": false

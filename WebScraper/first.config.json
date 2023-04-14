@@ -12,10 +12,11 @@
       }
     },
     {
-      "Text": {
+      "SaveText": {
         "args": [
           {
-            "path": "//h2[contains(.,'What does the pattern consist of?')]"
+            "path": "//h2",
+            "name": "TestingName"
           }
         ]
       }
