@@ -20,14 +20,20 @@ namespace WebScraper
                 return 1;
             }
 
-            if (!File.Exists("config.schema.json"))
+            if (!File.Exists(Paths.ProjectPath))
             {
-                JsonGenerator.GenerateJson("config.schema.json");
+                Console.Error.WriteLine("Program started from wrong directory. Please start this program from WebScraper directory");
+                return 1;
             }
 
-            if (!JsonValidator.Validate("config.schema.json", Args.GetFilename()))
+            if (!File.Exists(Paths.ConfigPath))
             {
-                Console.WriteLine("Config file is not valid");
+                JsonGenerator.GenerateJson(Paths.ConfigPath);
+            }
+
+            if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
+            {
+                Console.Error.WriteLine("Config file is not valid");
                 return 1;
             }
 
@@ -53,7 +59,7 @@ namespace WebScraper
                 return 1;
             }
             
-            return 1;
+            return 0;
         }
     }
 }
