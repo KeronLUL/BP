@@ -37,6 +37,10 @@ public static class JsonGenerator
      ""loop"": {{
        ""type"": ""boolean""
      }},
+     ""waitTime"": {{
+       ""type"": ""integer"",
+       ""minimum"" : 0
+     }},
      ""commands"": {{
        ""type"": ""array"",
        ""items"": {{
@@ -55,24 +59,21 @@ public static class JsonGenerator
              ""type"": ""object"",
              ""properties"": {{
                ""args"": {{
-                 ""type"": ""array"",
-                 ""items"": {{
-                   ""type"": ""object"",
-                   ""properties"": {{");
+                 ""type"": ""object"",
+                 ""properties"": {{");
                 
             foreach (var param in parameters)
             {
                 json.Append($@"
-                     ""{param.Name}"": {{
-                       ""type"": ""{GetParameterType(param.ParameterType)}""
-                     }}");
+                   ""{param.Name}"": {{
+                     ""type"": ""{GetParameterType(param.ParameterType)}""
+                   }}");
                 if (param != parameters.Last())
                 { 
                     json.Append(',');
                 }
             }
             json.Append($@"
-                   }}
                  }},
                  ""additionalProperties"": false,
                  ""minProperties"": {parameters.Length}
@@ -94,7 +95,7 @@ public static class JsonGenerator
      }}
    }},
    ""additionalProperties"": false,
-   ""required"": [""url"", ""loop""]
+   ""required"": [""url"", ""loop"", ""waitTime""]
 }}");
             
         sw.Write(json.ToString());

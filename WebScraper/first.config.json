@@ -1,24 +1,26 @@
 ﻿{
-  "url": "https://refactoring.guru/design-patterns/command",
+  "url": "https://www.dotwwwabuff.com/players/461405959",
   "loop": false,
+  "waitTime": 0,
   "commands": [
     {
-      "Click": {
-        "args": [
+      "SaveText": {
+        "args": 
           {
-            "path": "//a[contains(text(),'What is a Pattern')]"
+            "path": "//a[contains(text(),'Templar Assassin')]",
+            "name": "TestingName"
           }
-        ]
+        
       }
     },
     {
-      "SaveText": {
-        "args": [
+      "SaveAttribute": {
+        "args": 
           {
-            "path": "//h2",
-            "name": "TestingName"
+            "path": "//a[contains(text(),'Templar Assassin')]",
+            "name": "TestingNameAtt",
+            "attribute": "href"
           }
-        ]
       }
     }
   ]

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SeleniumGenerated;
 using WebScraper.Json;
 using WebScraper.Arguments;
 using WebScraper.Json.Entities;
@@ -17,13 +16,13 @@ namespace WebScraper
             catch (Exception)
             {
                 Console.Error.WriteLine(@"Argument parsing failed");
-                return 1;
+                return ReturnCodes.ArgumentError;
             }
 
             if (!File.Exists(Paths.ProjectPath))
             {
                 Console.Error.WriteLine("Program started from wrong directory. Please start this program from WebScraper directory");
-                return 1;
+                return ReturnCodes.ProjectPathError;
             }
 
             if (!File.Exists(Paths.ConfigPath))
@@ -34,30 +33,34 @@ namespace WebScraper
             if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
             {
                 Console.Error.WriteLine("Config file is not valid");
-                return 1;
+                return ReturnCodes.ConfigError;
             }
 
             Config? config;
             try
             {
                 config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Args.GetFilename()));
+                Args.PrintVerbose("Config file deserialized");
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Args.PrintVerbose(e.ToString());
                 Console.Error.WriteLine($@"Failed to deserialize JSON from file: '{Args.GetFilename()}");
-                return 1;
+                return ReturnCodes.JsonError;
             }
             
             try
             {
                 var scraper = new Scraper();
+                Args.PrintVerbose("Running WebScraper...");
                 scraper.Run(config);
             }
             catch (Exception)
             {
-                SeleniumWebDriver.Quit();
-                return 1;
+                Args.PrintVerbose("WebScraper finished with error.");
+                return ReturnCodes.ScraperError;
             }
+            Args.PrintVerbose("WebScraper finished.");
             
             return 0;
         }

@@ -28,23 +28,23 @@ public static class Object
     public static string? GetParameter(Command command, PropertyInfo property, ParameterInfo parameter)
     {
         if (property.Name == "Click")
-            return command.Click?.args?[0].path;
+            return command.Click?.Args?.Path;
         if (property.Name == "SaveText")
-            return parameter.Name == "path" ? command.SaveText?.args?[0].path : command.SaveText?.args?[0].name;
+            return parameter.Name == "path" ? command.SaveText?.Args?.Path : command.SaveText?.Args?.Name;
         if (property.Name == "ImplicitWait")
-            return command.ImplicitWait?.args?[0].time.ToString();
+            return command.ImplicitWait?.Args?.Time.ToString();
         if (property.Name == "Clear")
-            return command.Clear?.args?[0].path;
+            return command.Clear?.Args?.Path;
         if (property.Name == "SendKeys")
-            return parameter.Name == "path" ? command.SendKeys?.args?[0].path : command.SendKeys?.args?[0].text;
+            return parameter.Name == "path" ? command.SendKeys?.Args?.Path : command.SendKeys?.Args?.Text;
         if (property.Name == "Submit")
-            return command.SaveText?.args?[0].path;
+            return command.SaveText?.Args?.Path;
         if (property.Name == "SaveAttribute")
             return parameter.Name switch
             {
-                "path" => command.SaveAttribute?.args?[0].path,
-                "attribute" => command.SaveAttribute?.args?[0].attribute,
-                _ => command.SaveAttribute?.args?[0].name
+                "path" => command.SaveAttribute?.Args?.Path,
+                "attribute" => command.SaveAttribute?.Args?.Attribute,
+                _ => command.SaveAttribute?.Args?.Name
             };
         return "";
     }

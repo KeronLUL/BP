@@ -2,7 +2,7 @@
 
 public class CommandFactory
 {
-    public List<Arguments>? args { get; set; }
+    public Arguments? Args { get; set; }
 }
 
 public class Command
@@ -46,9 +46,9 @@ public class SaveText : CommandFactory
 
 public class Arguments
 {
-    public string? path { get; set; }
-    public string? text { get; set; }
-    public string? name { get; set; }
-    public string? attribute { get; set; }
-    public int? time { get; set; }
+    public string? Path { get; set; }
+    public string? Text { get; set; }
+    public string? Name { get; set; }
+    public string? Attribute { get; set; }
+    public int? Time { get; set; }
 }

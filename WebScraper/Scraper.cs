@@ -1,11 +1,6 @@
 ﻿using System.Reflection;
-using Newtonsoft.Json;
-using OpenQA.Selenium;
 using SeleniumGenerated;
 using WebScraper.Arguments;
-using WebScraper.Database.Entities;
-using WebScraper.Database.EntityCreator;
-using WebScraper.Database.Facades;
 using WebScraper.EntityHandlers;
 using WebScraper.Json.Entities;
 
@@ -13,15 +8,18 @@ namespace WebScraper;
 
 public class Scraper
 {
-    public async void Run(Config? config)
+    public void Run(Config? config)
     {
         try
         {
-            SeleniumWebDriver.SetUp(config!.url, config!.driver != null ? config!.driver : "Firefox");
+            Args.PrintVerbose($@"Setting up connection to {config!.Url}.");
+            SeleniumWebDriver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
         }
-        catch (WebDriverArgumentException)
+        catch (Exception e)
         {
-            await Console.Error.WriteLineAsync($@"Can't connect to URL: '{config!.url}'");
+            Args.PrintVerbose(e.ToString());
+            Console.Error.WriteLine($@"Can't connect to URL: '{config!.Url}'");
+            SeleniumWebDriver.Quit(); //wtf is this
             throw;
         }
 
@@ -29,13 +27,13 @@ public class Scraper
 
         do
         {
-            foreach (var command in config!.commands!)
+            foreach (var command in config!.Commands!)
             {
                 foreach (var commandProperty in command.GetType().GetProperties())
                 {
                     if (!Object.CheckObject(command, commandProperty))
                         continue;
-        
+                    
                     var assembly = Assembly.GetExecutingAssembly().GetTypes();
                     var method = assembly.Where(name => name.FullName == $@"SeleniumCommands.{commandProperty.Name}").ToArray()[0].GetMethods()[0];
                     var parameters = method.GetParameters();
@@ -50,23 +48,27 @@ public class Scraper
                     var value = "";
                     try
                     {
+                        Args.PrintVerbose($@"Executing command {commandProperty.Name}.");
                         value = (string)method?.Invoke(Activator.CreateInstance(assembly[0]), parameterObject)!;
                     }
-                    catch(Exception)
+                    catch(Exception e)
                     {
-                        await Console.Error.WriteLineAsync($@"Exception has been thrown when executing command: '{commandProperty.Name}' with XPath: '{parameterObject[0]}'");
+                        Args.PrintVerbose(e.ToString());
+                        Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}' with XPath: '{parameterObject[0]}'");
                         throw;
                     }
 
-                    if (commandProperty.Name == "SaveText")
-                    {
-                        CreateOrRetrieveElement.CreateOrRetrieve(website, command!.SaveText!.args![0].name, value);
-                    }// attribute save
+                    CreateOrRetrieveElement.SaveValue(command, commandProperty, website, value);
                 }
             }
             
-            //back to begining url and wait
-        } while (config.loop);
+            if (config.Loop)
+            {
+                Args.PrintVerbose($@"Loop finished, waiting until next loop starts.");
+                Thread.Sleep(config.WaitTime * 1000);
+                SeleniumWebDriver.Navigate(config.Url);
+            }
+        } while (config.Loop);
         
         SeleniumWebDriver.Quit();
     }

@@ -49,6 +49,11 @@ namespace SeleniumGenerated
             Driver.Url = Url;
         }}
 
+        public static void Navigate(string url)
+        {{
+            Driver.Navigate().GoToUrl(url);
+        }}
+
         public static void Quit()
         {{
             Driver.Quit();

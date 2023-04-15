@@ -12,6 +12,10 @@
      "loop": {
        "type": "boolean"
      },
+     "waitTime": {
+       "type": "integer",
+       "minimum" : 0
+     },
      "commands": {
        "type": "array",
        "items": {
@@ -21,13 +25,10 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -40,16 +41,13 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     },
-                     "name": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   },
+                   "name": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -62,19 +60,16 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     },
-                     "attribute": {
-                       "type": "string"
-                     },
-                     "name": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   },
+                   "attribute": {
+                     "type": "string"
+                   },
+                   "name": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -87,13 +82,10 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -106,13 +98,10 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -125,16 +114,13 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "path": {
-                       "type": "string"
-                     },
-                     "text": {
-                       "type": "string"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   },
+                   "text": {
+                     "type": "string"
                    }
                  },
                  "additionalProperties": false,
@@ -147,13 +133,10 @@
              "type": "object",
              "properties": {
                "args": {
-                 "type": "array",
-                 "items": {
-                   "type": "object",
-                   "properties": {
-                     "time": {
-                       "type": "integer"
-                     }
+                 "type": "object",
+                 "properties": {
+                   "time": {
+                     "type": "integer"
                    }
                  },
                  "additionalProperties": false,
@@ -168,5 +151,5 @@
      }
    },
    "additionalProperties": false,
-   "required": ["url", "loop"]
+   "required": ["url", "loop", "waitTime"]
 }

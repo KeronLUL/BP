@@ -11,10 +11,10 @@ public static class CreateOrRetrieveWebsite
     {
         var websiteFacade = new WebsiteFacade();
         
-        var website = websiteFacade.GetAsync(config.url).Result;
+        var website = websiteFacade.GetAsync(config.Url).Result;
         if (website == null)
         {
-            website = WebsiteCreator.CreateWebsite(config!.url);
+            website = WebsiteCreator.CreateWebsite(config!.Url);
             websiteFacade.SaveAsync(website);
         }
 

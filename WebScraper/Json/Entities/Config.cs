@@ -2,8 +2,9 @@
 
 public class Config
 {
-    public string? url { get; set; }
-    public bool loop { get; set; }
-    public string? driver { get; set; }
-    public List<Command>? commands { get; set; }
+    public string? Url { get; set; }
+    public bool Loop { get; set; }
+    public string? Driver { get; set; }
+    public int WaitTime { get; set; }
+    public List<Command>? Commands { get; set; }
 }
