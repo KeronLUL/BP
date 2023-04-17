@@ -19,6 +19,7 @@ public static class Object
             case "Navigate" when command.Navigate == null:
             case "WaitUntilExists" when command.WaitUntilExists == null:
             case "WaitUntilClickable" when command.WaitUntilClickable == null:
+            case "MoveToElement" when command.MoveToElement == null:
                 return false;
             default:
                 return true;
@@ -37,6 +38,8 @@ public static class Object
             return command.SaveText?.Args?.Path;
         if (property.Name == "Navigate")
             return command.Navigate?.Args?.Path;
+        if (property.Name == "MoveToElement")
+            return command.MoveToElement?.Args?.Path;
         if (property.Name == "SaveText")
             return parameter.Name == "path" ? command.SaveText?.Args?.Path : command.SaveText?.Args?.Name;
         if (property.Name == "SendKeys")

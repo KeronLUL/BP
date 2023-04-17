@@ -3,28 +3,10 @@ dotnet ef database update --context WebScraperDbContext --project ..\WebScraper.
 dotnet ef database drop --context WebScraperDbContext --project ..\WebScraper.Database
 
 
-explicitwait
-implicitwait
-if (commandProperty.Name == "ImplicitWait")
-{
-    parameterObject[index] = Int32.Parse(parameterObject[index]!.ToString()!);
-}
-
-Komenty
-
-$LASTEXITCODE
 Geckodriver must be some version to be headless
 
-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
-
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="$(PkgSelenium_WebDriver)\lib\net7.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        
-     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>     
-<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+$LASTEXITCODE
 
 
-<ItemGroup>
-        <!-- Exclude the output of source generators from the compilation -->
-        <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
-    </ItemGroup>
+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
+

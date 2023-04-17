@@ -17,21 +17,16 @@ namespace SeleniumGenerated
             {
                 case "Chrome":
                     var optionsChrome = new ChromeOptions();
-                    optionsChrome.AddArgument("--headless=new");
+                    optionsChrome.AddArguments("--headless=new", "--window-size=1920,1080", "--disable-gpu", "--no-sandbox");
                     Driver = new ChromeDriver(optionsChrome);
                     break;
                 case "Firefox":
                     var optionsFirefox = new FirefoxOptions();
-                    optionsFirefox.AddArgument("--headless=new");
+                    optionsFirefox.AddArguments("--headless=new", "--window-size=1920,1080");
                     Driver = new FirefoxDriver(optionsFirefox);
                     break;
                 case "Safari":
                     Driver = new SafariDriver();
-                    break;
-                default:
-                    var options = new FirefoxOptions();
-                    options.AddArgument("--headless=new");
-                    Driver = new FirefoxDriver(options);
                     break;
             }
             

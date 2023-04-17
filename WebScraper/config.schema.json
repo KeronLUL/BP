@@ -7,7 +7,8 @@
        "type": "string"
      },
      "driver": {
-       "type": "string"
+       "type": "string",
+       "pattern": "^(Chrome|Firefox|Safari)$"
      },
      "loop": {
        "type": "boolean"
@@ -129,6 +130,22 @@
              },
              "additionalProperties": false
            },
+           "MoveToElement": {
+             "type": "object",
+             "properties": {
+               "args": {
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   }
+                 },
+                 "additionalProperties": false,
+                 "minProperties": 1
+               }
+             },
+             "additionalProperties": false
+           },
            "Navigate": {
              "type": "object",
              "properties": {
@@ -203,7 +220,8 @@
              "additionalProperties": false
            }
          },
-         "additionalProperties": false
+         "additionalProperties": false,
+         "maxProperties": 1
        }
      }
    },

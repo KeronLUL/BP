@@ -1,33 +1,66 @@
 ﻿{
-  "url": "https://www.dotabuff.com/players/461405959",
+  "url": "https://www.alza.cz",
   "loop": false,
+  "driver": "Firefox",
   "waitTime": 0,
   "commands": [
     {
-      "SaveText": {
-        "args": 
-          {
-            "path": "//a[contains(text(),'Templar Assassin')]",
-            "name": "TestingName"
-          }
-        
-      }
-    },
-    {
-      "SaveAttribute": {
-        "args": 
-          {
-            "path": "//a[contains(text(),'Templar Assassin')]",
-            "name": "TestingNameAtt",
-            "attribute": "href"
-          }
-      }
-    },
-    {
-      "Navigate": {
+      "WaitUntilClickable": {
         "args":
         {
-          "path": "https://www.dotabuff.com"
+          "path": "//a[contains(text(),'Rozumím')]",
+          "time": 10
+        }
+      }
+    },
+    {
+      "Click": {
+        "args":
+        {
+          "path": "//a[contains(text(),'Rozumím')]"
+        }
+      }
+    },
+    {
+      "Click": {
+        "args": 
+          {
+            "path": "//a[contains(text(),'TV, foto, audio-video')]"
+          }
+      }
+    },
+    {
+      "WaitUntilClickable": {
+        "args":
+        {
+          "path": "//div[@id='alzaDialog']/div[2]",
+          "time": 10
+        }
+      }
+    },
+    {
+      "Click": {
+        "args":
+        {
+          "path": "//div[@id='alzaDialog']/div[2]"
+        }
+      }
+    },
+    {
+      "WaitUntilClickable": {
+        "args":
+        {
+          "path": "//div[2]/div/div/div[3]/div/div/div/div/a/span",
+          "time": 10
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[2]/div/div/div[3]/div/div/div/div/a/span",
+          "name": "Products"
         }
       }
     }

@@ -32,7 +32,8 @@ public static class JsonGenerator
        ""type"": ""string""
      }},
      ""driver"": {{
-       ""type"": ""string""
+       ""type"": ""string"",
+       ""pattern"": ""^(Chrome|Firefox|Safari)$""
      }},
      ""loop"": {{
        ""type"": ""boolean""
@@ -95,7 +96,8 @@ public static class JsonGenerator
         }
         json.Append($@"
          }},
-         ""additionalProperties"": false
+         ""additionalProperties"": false,
+         ""maxProperties"": 1
        }}
      }}
    }},

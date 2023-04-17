@@ -17,9 +17,14 @@ public class Command
     public Navigate? Navigate { get; set; }
     public WaitUntilExists? WaitUntilExists { get; set; }
     public WaitUntilClickable? WaitUntilClickable { get; set; }
+    public MoveToElement? MoveToElement { get; set; }
 }
 
 public class SaveAttribute : CommandFactory
+{
+}
+
+public class MoveToElement : CommandFactory
 {
 }
 

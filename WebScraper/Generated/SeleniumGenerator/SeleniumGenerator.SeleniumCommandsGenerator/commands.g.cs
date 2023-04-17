@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using SeleniumGenerated;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using OpenQA.Selenium.Interactions;
 
 namespace SeleniumCommands
 {
@@ -62,6 +63,17 @@ namespace SeleniumCommands
         public static void Execute(String path, String text)
         {
             SeleniumWebDriver.Driver.FindElement(By.XPath(path)).SendKeys(text);
+        }
+    }
+
+    public class MoveToElement : ICommand
+    {
+        public static void Execute(String path)
+        {
+            WebDriverWait wait = new WebDriverWait(SeleniumWebDriver.Driver, TimeSpan.FromSeconds(10));
+            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(path)));
+            Actions action = new Actions(SeleniumWebDriver.Driver);
+            action.MoveToElement(element).Perform();
         }
     }
 

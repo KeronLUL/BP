@@ -1,0 +1,54 @@
+﻿{
+  "url": "https://www.czc.cz",
+  "driver": "Firefox",
+  "loop": false,
+  "waitTime": 0,
+  "commands": [
+    {
+      "WaitUntilExists": {
+        "args": {
+          "path": "//div[@id='ccp-popup']/div/div[2]/button[3]",
+          "time": 10
+        }
+      }
+    },
+    {
+      "Click": {
+        "args": {
+          "path": "//div[@id='ccp-popup']/div/div[2]/button[3]"
+        }
+      }
+    },
+    {
+      "MoveToElement": {
+        "args":
+        {
+          "path": "//nav[@id='navigation-preview-menu']/div[2]/div[4]/div"
+        }
+      }
+    },
+    {
+      "WaitUntilClickable": {
+        "args": {
+          "path": "//a[contains(text(),'Grafické karty')]",
+          "time": 10
+        }
+      }
+    },
+    {
+      "Click": {
+        "args": {
+          "path": "//a[contains(text(),'Grafické karty')]"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args": {
+          "path": "//div[@id='entry-header']/h1",
+          "name": "Header"
+        }
+      }
+    }
+  ]
+}
