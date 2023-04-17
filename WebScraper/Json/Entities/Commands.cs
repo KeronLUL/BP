@@ -14,9 +14,24 @@ public class Command
     public SendKeys? SendKeys { get; set; }
     public ImplicitWait? ImplicitWait { get; set; }
     public Submit? Submit { get; set; }
+    public Navigate? Navigate { get; set; }
+    public WaitUntilExists? WaitUntilExists { get; set; }
+    public WaitUntilClickable? WaitUntilClickable { get; set; }
 }
 
 public class SaveAttribute : CommandFactory
+{
+}
+
+public class WaitUntilExists : CommandFactory
+{
+}
+
+public class WaitUntilClickable : CommandFactory
+{
+}
+
+public class Navigate : CommandFactory
 {
 }
 

@@ -5,13 +5,18 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WebScraper.SeleniumGenerator\WebScraper.SeleniumGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <!-- Exclude the output of source generators from the compilation -->
+        <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SeleniumGenerator\SeleniumGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\WebScraper.Database\WebScraper.Database.csproj" />
     </ItemGroup>
 
@@ -23,10 +28,7 @@
         </PackageReference>
         <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
         <PackageReference Include="Selenium.WebDriver" Version="4.8.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Data" />
+        <PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
     </ItemGroup>
 
 </Project>

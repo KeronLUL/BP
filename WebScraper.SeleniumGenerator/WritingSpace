@@ -1,4 +1,0 @@
-﻿dotnet ef migrations add InitialCreate --context WebScraperDbContext --project ..\WebScraper.Database
-dotnet ef database update --context WebScraperDbContext --project ..\WebScraper.Database
-dotnet ef database drop --context WebScraperDbContext --project ..\WebScraper.Database
-

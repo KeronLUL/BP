@@ -15,7 +15,7 @@ public class ElementFacade
             var entity = await ctx.Elements.FirstOrDefaultAsync(i => i.Name == name && i.WebsiteId == websiteId );
             return entity;
         }
-        catch (DbUpdateException e)
+        catch (DbUpdateException)
         {
             throw new InvalidOperationException("Retrieving entity failed.");
         }

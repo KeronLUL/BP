@@ -66,7 +66,13 @@ public static class JsonGenerator
             {
                 json.Append($@"
                    ""{param.Name}"": {{
-                     ""type"": ""{GetParameterType(param.ParameterType)}""
+                     ""type"": ""{GetParameterType(param.ParameterType)}""");
+                if (param.Name == "time")
+                {
+                    json.Append($@",
+                     ""minimum"" : 0");
+                }
+                json.Append($@"
                    }}");
                 if (param != parameters.Last())
                 { 
@@ -87,7 +93,6 @@ public static class JsonGenerator
                 
             }
         }
-            
         json.Append($@"
          }},
          ""additionalProperties"": false

@@ -43,6 +43,14 @@ public class Scraper
                     for (int index = 0; index < parameterObject.Length; index++)
                     {
                         parameterObject[index] = Object.GetParameter(command, commandProperty, parameters[index]);
+                        Console.WriteLine(parameterObject[index] );
+                        switch (commandProperty.Name)
+                        {
+                            case "ImplicitWait":
+                            case "WaitUntilClickable" or "WaitUntilExists" when parameters[index].Name == "time":
+                                parameterObject[index] = int.Parse(parameterObject[index]!.ToString()!);
+                                break;
+                        }
                     }
                     
                     var value = "";
@@ -69,7 +77,7 @@ public class Scraper
                 SeleniumWebDriver.Navigate(config.Url);
             }
         } while (config.Loop);
-        
-        SeleniumWebDriver.Quit();
+
+        //SeleniumWebDriver.Quit();
     }
 }

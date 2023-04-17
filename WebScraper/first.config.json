@@ -1,5 +1,5 @@
 ﻿{
-  "url": "https://www.dotwwwabuff.com/players/461405959",
+  "url": "https://www.dotabuff.com/players/461405959",
   "loop": false,
   "waitTime": 0,
   "commands": [
@@ -21,6 +21,14 @@
             "name": "TestingNameAtt",
             "attribute": "href"
           }
+      }
+    },
+    {
+      "Navigate": {
+        "args":
+        {
+          "path": "https://www.dotabuff.com"
+        }
       }
     }
   ]

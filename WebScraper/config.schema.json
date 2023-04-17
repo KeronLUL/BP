@@ -129,6 +129,22 @@
              },
              "additionalProperties": false
            },
+           "Navigate": {
+             "type": "object",
+             "properties": {
+               "args": {
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   }
+                 },
+                 "additionalProperties": false,
+                 "minProperties": 1
+               }
+             },
+             "additionalProperties": false
+           },
            "ImplicitWait": {
              "type": "object",
              "properties": {
@@ -136,11 +152,52 @@
                  "type": "object",
                  "properties": {
                    "time": {
-                     "type": "integer"
+                     "type": "integer",
+                     "minimum" : 0
                    }
                  },
                  "additionalProperties": false,
                  "minProperties": 1
+               }
+             },
+             "additionalProperties": false
+           },
+           "WaitUntilExists": {
+             "type": "object",
+             "properties": {
+               "args": {
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   },
+                   "time": {
+                     "type": "integer",
+                     "minimum" : 0
+                   }
+                 },
+                 "additionalProperties": false,
+                 "minProperties": 2
+               }
+             },
+             "additionalProperties": false
+           },
+           "WaitUntilClickable": {
+             "type": "object",
+             "properties": {
+               "args": {
+                 "type": "object",
+                 "properties": {
+                   "path": {
+                     "type": "string"
+                   },
+                   "time": {
+                     "type": "integer",
+                     "minimum" : 0
+                   }
+                 },
+                 "additionalProperties": false,
+                 "minProperties": 2
                }
              },
              "additionalProperties": false
