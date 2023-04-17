@@ -43,7 +43,6 @@ public class Scraper
                     for (int index = 0; index < parameterObject.Length; index++)
                     {
                         parameterObject[index] = Object.GetParameter(command, commandProperty, parameters[index]);
-                        Console.WriteLine(parameterObject[index] );
                         switch (commandProperty.Name)
                         {
                             case "ImplicitWait":
@@ -65,7 +64,6 @@ public class Scraper
                         Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}' with XPath: '{parameterObject[0]}'");
                         throw;
                     }
-
                     CreateOrRetrieveElement.SaveValue(command, commandProperty, website, value);
                 }
             }
@@ -78,6 +76,6 @@ public class Scraper
             }
         } while (config.Loop);
 
-        //SeleniumWebDriver.Quit();
+        SeleniumWebDriver.Quit();
     }
 }
