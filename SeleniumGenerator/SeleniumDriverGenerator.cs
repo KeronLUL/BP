@@ -28,7 +28,7 @@ namespace SeleniumGenerated
             {{
                 case ""Chrome"":
                     var optionsChrome = new ChromeOptions();
-                    optionsChrome.AddArguments(""--headless=new"", ""--window-size=1920,1080"", ""--disable-gpu"", ""--no-sandbox"");
+                    optionsChrome.AddArguments(""--headless=new"", ""--window-size=1920,1080"");
                     Driver = new ChromeDriver(optionsChrome);
                     break;
                 case ""Firefox"":
