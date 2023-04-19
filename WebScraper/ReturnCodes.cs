@@ -7,4 +7,5 @@ public static class ReturnCodes
     public const int ProjectPathError = 3;
     public const int ConfigError = 4;
     public const int JsonError = 5;
+    
 }

@@ -122,7 +122,6 @@ namespace SeleniumCommands
         }}
     }}
 }}");
-            
             context.AddSource("commands.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 

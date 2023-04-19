@@ -60,7 +60,6 @@ namespace SeleniumGenerated
         }}
     }}
 }}");
-
             context.AddSource("driver.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 
