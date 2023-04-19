@@ -2,7 +2,7 @@
   "url": "https://www.alza.cz",
   "loop": false,
   "driver": "Firefox",
-  "waitTime": 0,
+  "waitTime": 10,
   "commands": [
     {
       "WaitUntilClickable": {
@@ -50,8 +50,16 @@
       "WaitUntilClickable": {
         "args":
         {
-          "path": "//div[2]/div/div/div[3]/div/div/div/div/a/span",
+          "path": "//a[@class='alz102']",
           "time": 10
+        }
+      }
+    },
+    {
+      "Click": {
+        "args":
+        {
+          "path": "//a[@class='alz102']"
         }
       }
     },
@@ -59,8 +67,53 @@
       "SaveText": {
         "args":
         {
-          "path": "//div[2]/div/div/div[3]/div/div/div/div/a/span",
-          "name": "Products"
+          "path": "//div[@id='besti']/div/div[4]/span",
+          "name": "firstPrice"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[@id='besti']/div/div[3]/div/div/a",
+          "name": "firstProduct"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[@id='besti']/div[2]/div[4]/span",
+          "name": "secondPrice"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[@id='besti']/div[2]/div[3]/div/div/a",
+          "name": "secondProduct"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[@id='besti']/div[3]/div[4]/span",
+          "name": "thirdPrice"
+        }
+      }
+    },
+    {
+      "SaveText": {
+        "args":
+        {
+          "path": "//div[@id='besti']/div[3]/div[3]/div/div/a",
+          "name": "thirdProduct"
         }
       }
     }

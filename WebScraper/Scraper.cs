@@ -72,7 +72,8 @@ public class Scraper
             {
                 Args.PrintVerbose($@"Loop finished, waiting until next loop starts.");
                 Thread.Sleep(config.WaitTime * 1000);
-                SeleniumWebDriver.Navigate(config.Url);
+                SeleniumWebDriver.Close();
+                SeleniumWebDriver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
             }
         } while (config.Loop);
 
