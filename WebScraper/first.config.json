@@ -47,19 +47,10 @@
       }
     },
     {
-      "WaitUntilClickable": {
+      "Navigate": {
         "args":
         {
-          "path": "//a[@class='alz102']",
-          "time": 10
-        }
-      }
-    },
-    {
-      "Click": {
-        "args":
-        {
-          "path": "//a[@class='alz102']"
+          "path": "https://www.alza.cz/televize/18849604.htm"
         }
       }
     },
