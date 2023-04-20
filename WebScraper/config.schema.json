@@ -1,229 +1,194 @@
 {
-   "$id": "/webscraper",
-   "type": "object",
-   "properties": {
-     "url": {
-       "type": "string"
-     },
-     "driver": {
-       "type": "string",
-       "pattern": "^(Chrome|Firefox|Safari)$"
-     },
-     "loop": {
-       "type": "boolean"
-     },
-     "waitTime": {
-       "type": "integer",
-       "minimum" : 0
-     },
-     "commands": {
-       "type": "array",
-       "items": {
-         "type": "object",
-         "properties": {
-           "Click": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "SaveText": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   },
-                   "name": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 2
-               }
-             },
-             "additionalProperties": false
-           },
-           "SaveAttribute": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   },
-                   "attribute": {
-                     "type": "string"
-                   },
-                   "name": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 3
-               }
-             },
-             "additionalProperties": false
-           },
-           "Clear": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "Submit": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "SendKeys": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   },
-                   "text": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 2
-               }
-             },
-             "additionalProperties": false
-           },
-           "MoveToElement": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "Navigate": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "ImplicitWait": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "time": {
-                     "type": "integer",
-                     "minimum" : 0
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 1
-               }
-             },
-             "additionalProperties": false
-           },
-           "WaitUntilExists": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   },
-                   "time": {
-                     "type": "integer",
-                     "minimum" : 0
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 2
-               }
-             },
-             "additionalProperties": false
-           },
-           "WaitUntilClickable": {
-             "type": "object",
-             "properties": {
-               "args": {
-                 "type": "object",
-                 "properties": {
-                   "path": {
-                     "type": "string"
-                   },
-                   "time": {
-                     "type": "integer",
-                     "minimum" : 0
-                   }
-                 },
-                 "additionalProperties": false,
-                 "minProperties": 2
-               }
-             },
-             "additionalProperties": false
-           }
-         },
-         "additionalProperties": false,
-         "maxProperties": 1
-       }
-     }
-   },
-   "additionalProperties": false,
-   "required": ["url", "loop", "waitTime"]
+  "$id": "Config",
+  "type": "object",
+  "additionalProperties": false, "properties": {
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "loop": {
+      "type": "boolean"
+    },
+    "driver": {
+      "type": "string",
+      "enum": [
+        "Chrome",
+        "Firefox",
+        "Industrial"
+      ]
+    },
+    "waitTime": {
+      "type": "integer",
+      "minimum": 0.0,
+      "maximum": 1E+18
+    },
+    "commands": {
+      "$id": "List`1",
+      "type": "array",
+      "items": {
+        "$id": "Command",
+        "type": "object",
+        "additionalProperties": false, "properties": {
+          "click": {
+            "$id": "Click",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              }
+            }
+          },
+          "saveText": {
+            "$id": "SaveText",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "name"
+            ]
+          },
+          "saveAttribute": {
+            "$id": "SaveAttribute",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              },
+              "attribute": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "attribute",
+              "name"
+            ]
+          },
+          "clear": {
+            "$id": "Clear",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "sendKeys": {
+            "$id": "SendKeys",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "text"
+            ]
+          },
+          "implicitWait": {
+            "$id": "ImplicitWait",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "time": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "time"
+            ]
+          },
+          "submit": {
+            "$id": "Submit",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "navigate": {
+            "$id": "Navigate",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "waitUntilExists": {
+            "$id": "WaitUntilExists",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              },
+              "time": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "path",
+              "time"
+            ]
+          },
+          "waitUntilClickable": {
+            "$id": "WaitUntilClickable",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              },
+              "time": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "path",
+              "time"
+            ]
+          },
+          "moveToElement": {
+            "$id": "MoveToElement",
+            "type": "object",
+            "additionalProperties": false, "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "url",
+    "loop",
+    "waitTime"
+  ]
 }

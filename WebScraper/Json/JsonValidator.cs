@@ -14,10 +14,10 @@ public static class JsonValidator
         {
             var config = File.ReadAllText(pathToConfig);
             var jsonConfig = JToken.Parse(config);
-        
+
             var schema = File.ReadAllText(pathToSchema);
             var jsonSchema = JSchema.Parse(schema);
-            
+
             Args.PrintVerbose("Done validating JSON schema.");
         
             return jsonConfig.IsValid(jsonSchema);

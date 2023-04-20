@@ -5,107 +5,71 @@
   "waitTime": 10,
   "commands": [
     {
-      "WaitUntilClickable": {
-        "args":
-        {
-          "path": "//a[contains(text(),'Rozumím')]",
-          "time": 10
-        }
+      "waitUntilClickable": {
+        "path": "//a[contains(text(),'Rozumím')]",
+        "time": 10
       }
     },
     {
-      "Click": {
-        "args":
-        {
-          "path": "//a[contains(text(),'Rozumím')]"
-        }
+      "click": {
+        "path": "//a[contains(text(),'Rozumím')]"
       }
     },
     {
-      "Click": {
-        "args": 
-          {
-            "path": "//a[contains(text(),'TV, foto, audio-video')]"
-          }
+      "click": {
+        "path": "//a[contains(text(),'TV, foto, audio-video')]"
       }
     },
     {
-      "WaitUntilClickable": {
-        "args":
-        {
-          "path": "//div[@id='alzaDialog']/div[2]",
-          "time": 10
-        }
+      "waitUntilClickable": {
+        "path": "//div[@id='alzaDialog']/div[2]",
+        "time": 10
       }
     },
     {
-      "Click": {
-        "args":
-        {
-          "path": "//div[@id='alzaDialog']/div[2]"
-        }
+      "click": {
+        "path": "//div[@id='alzaDialog']/div[2]"
       }
     },
     {
-      "Navigate": {
-        "args":
-        {
-          "path": "https://www.alza.cz/televize/18849604.htm"
-        }
+      "navigate": {
+        "path": "https://www.alza.cz/televize/18849604.htm"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div/div[4]/span",
-          "name": "firstPrice"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div/div[4]/span",
+        "name": "firstPrice"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div/div[3]/div/div/a",
-          "name": "firstProduct"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div/div[3]/div/div/a",
+        "name": "firstProduct"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div[2]/div[4]/span",
-          "name": "secondPrice"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div[2]/div[4]/span",
+        "name": "secondPrice"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div[2]/div[3]/div/div/a",
-          "name": "secondProduct"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div[2]/div[3]/div/div/a",
+        "name": "secondProduct"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div[3]/div[4]/span",
-          "name": "thirdPrice"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div[3]/div[4]/span",
+        "name": "thirdPrice"
       }
     },
     {
-      "SaveText": {
-        "args":
-        {
-          "path": "//div[@id='besti']/div[3]/div[3]/div/div/a",
-          "name": "thirdProduct"
-        }
+      "saveText": {
+        "path": "//div[@id='besti']/div[3]/div[3]/div/div/a",
+        "name": "thirdProduct"
       }
     }
   ]

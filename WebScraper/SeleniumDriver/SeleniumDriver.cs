@@ -11,7 +11,7 @@ namespace WebScraper.SeleniumDriver
 
         public void SetUp(string? url, string driver)
         {
-            switch(driver)
+            switch (driver)
             {
                 case "Chrome":
                     var optionsChrome = new ChromeOptions();
@@ -27,7 +27,7 @@ namespace WebScraper.SeleniumDriver
                     Driver = new SafariDriver();
                     break;
             }
-            
+
             Driver!.Url = url;
         }
 
