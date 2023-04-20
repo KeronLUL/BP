@@ -1,25 +1,26 @@
 ﻿using System.Reflection;
-using SeleniumGenerated;
 using WebScraper.Arguments;
 using WebScraper.EntityHandlers;
 using WebScraper.Json.Entities;
+using WebScraper.SeleniumDriver;
 
 namespace WebScraper;
 
 public class Scraper
 {
-    public void Run(Config? config)
+    public static void Run(Config? config)
     {
+        var driver = new SeleniumWebDriver();
         try
         {
             Args.PrintVerbose($@"Setting up connection to {config!.Url}.");
-            SeleniumWebDriver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
+            driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
         }
         catch (Exception e)
         {
             Args.PrintVerbose(e.ToString());
             Console.Error.WriteLine($@"Can't connect to URL: '{config!.Url}'");
-            SeleniumWebDriver.Quit(); //wtf is this
+            driver.Quit();
             throw;
         }
 
@@ -31,37 +32,28 @@ public class Scraper
             {
                 foreach (var commandProperty in command.GetType().GetProperties())
                 {
-                    if (!Object.CheckObject(command, commandProperty))
+                    var commandInstance = command.GetType().GetProperty(commandProperty.Name)!.GetValue(command, null);
+                    if (commandInstance == null)
                         continue;
                     
+                    commandInstance!.GetType().GetProperty("Driver")!.SetValue(commandInstance, driver.Driver);
+
                     var assembly = Assembly.GetExecutingAssembly().GetTypes();
-                    var method = assembly.Where(name => name.FullName == $@"SeleniumCommands.{commandProperty.Name}").ToArray()[0].GetMethods()[0];
-                    var parameters = method.GetParameters();
-        
-                    var parameterObject = new object?[parameters.Length];
-                
-                    for (int index = 0; index < parameterObject.Length; index++)
-                    {
-                        parameterObject[index] = Object.GetParameter(command, commandProperty, parameters[index]);
-                        switch (commandProperty.Name)
-                        {
-                            case "ImplicitWait":
-                            case "WaitUntilClickable" or "WaitUntilExists" when parameters[index].Name == "time":
-                                parameterObject[index] = int.Parse(parameterObject[index]!.ToString()!);
-                                break;
-                        }
-                    }
+                    var classObject = assembly.Where(name =>
+                            name.FullName == $@"WebScraper.SeleniumCommands.{commandProperty.Name}")
+                        .ToArray()[0];
+                    var method = classObject.GetMethod("Execute");
                     
                     var value = "";
                     try
                     {
                         Args.PrintVerbose($@"Executing command {commandProperty.Name}.");
-                        value = (string)method?.Invoke(Activator.CreateInstance(assembly[0]), parameterObject)!;
+                        value = (string)method?.Invoke(commandInstance, null)!;
                     }
                     catch(Exception e)
                     {
                         Args.PrintVerbose(e.ToString());
-                        Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}' with XPath: '{parameterObject[0]}'");
+                        Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}'");
                         throw;
                     }
                     CreateOrRetrieveElement.SaveValue(command, commandProperty, website, value);
@@ -72,11 +64,11 @@ public class Scraper
             {
                 Args.PrintVerbose($@"Loop finished, waiting until next loop starts.");
                 Thread.Sleep(config.WaitTime * 1000);
-                SeleniumWebDriver.Close();
-                SeleniumWebDriver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
+                driver.Close();
+                driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
             }
         } while (config.Loop);
 
-        SeleniumWebDriver.Quit();
+        driver.Quit();
     }
 }

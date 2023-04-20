@@ -25,16 +25,16 @@ namespace WebScraper
                 return ReturnCodes.ProjectPathError;
             }
 
-            if (!File.Exists(Paths.ConfigPath))
-            {
+            // if (!File.Exists(Paths.ConfigPath))
+            // {
                 JsonGenerator.GenerateJson(Paths.ConfigPath);
-            }
+            //}
 
-            if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
-            {
-                Console.Error.WriteLine("Config file is not valid");
-                return ReturnCodes.ConfigError;
-            }
+            // if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
+            // {
+            //     Console.Error.WriteLine("Config file is not valid");
+            //     return ReturnCodes.ConfigError;
+            // }
 
             Config? config;
             try
@@ -48,19 +48,18 @@ namespace WebScraper
                 Console.Error.WriteLine($@"Failed to deserialize JSON from file: '{Args.GetFilename()}");
                 return ReturnCodes.JsonError;
             }
-            
-            try
-            {
-                var scraper = new Scraper();
-                Args.PrintVerbose("Running WebScraper...");
-                scraper.Run(config);
-            }
-            catch (Exception)
-            {
-                Args.PrintVerbose("WebScraper finished with error.");
-                return ReturnCodes.ScraperError;
-            }
-            Args.PrintVerbose("WebScraper finished.");
+
+            // try
+            // {
+            //     Args.PrintVerbose("Running WebScraper...");
+            //     Scraper.Run(config);
+            // }
+            // catch (Exception e)
+            // {
+            //     Args.PrintVerbose("WebScraper finished with error." + e);
+            //     return ReturnCodes.ScraperError;
+            // }
+            // Args.PrintVerbose("WebScraper finished.");
             
             return 0;
         }
