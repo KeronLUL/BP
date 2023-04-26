@@ -10,7 +10,6 @@ public class Command
     public Click? Click { get; set; }
     public DeleteAllCookies? DeleteAllCookies { get; set; }
     public DismissAlert? DismissAlert { get; set; }
-    public ExecuteAsyncJavaScript? ExecuteAsyncJavaScript { get; set; }
     public ExecuteJavaScript? ExecuteJavaScript { get; set; }
     public Forward? Forward { get; set; }
     public ImplicitWait? ImplicitWait { get; set; }

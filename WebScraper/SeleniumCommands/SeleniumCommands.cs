@@ -175,19 +175,7 @@ namespace WebScraper.SeleniumCommands
         
         public string Execute()
         {
-            return (string)((IJavaScriptExecutor)Driver!).ExecuteScript("return document.title");
-        }
-    }
-    
-    public class ExecuteAsyncJavaScript : ICommand
-    {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public string Execute()
-        {
-            return (string)((IJavaScriptExecutor)Driver!).ExecuteAsyncScript("return document.title");
+            return (string)((IJavaScriptExecutor)Driver!).ExecuteScript(Args!.Script);
         }
     }
 
