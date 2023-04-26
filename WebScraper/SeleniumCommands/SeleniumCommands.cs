@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using WebScraper.Json.Entities;
 
 namespace WebScraper.SeleniumCommands
 {
@@ -11,27 +12,21 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path")]
-        public string? Path;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            Driver!.FindElement(By.XPath(Path)).Click();
+            Driver!.FindElement(By.XPath(Args!.Path)).Click();
         }
     }
-
     public class SaveText : ICommand
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
-        [JsonProperty("name"), Required]
-        public string? Name;
-
+        public Args? Args { get; set; }
         public string Execute()
         {
-            return Driver!.FindElement(By.XPath(Path)).Text;
+            return Driver!.FindElement(By.XPath(Args!.Path)).Text;
         }
     }
 
@@ -39,16 +34,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
-        [JsonProperty("attribute"), Required]
-        public string? Attribute;
-        [JsonProperty("name"), Required]
-        public string? Name;
+        public Args? Args { get; set; }
 
         public string Execute()
         {
-            return Driver!.FindElement(By.XPath(Path)).GetAttribute(Attribute);
+            return Driver!.FindElement(By.XPath(Args!.Path)).GetAttribute(Args!.Attribute);
         }
     }
 
@@ -56,12 +46,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            Driver!.FindElement(By.XPath(Path)).Clear();
+            Driver!.FindElement(By.XPath(Args!.Path)).Clear();
         }
     }
 
@@ -69,12 +58,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            Driver!.FindElement(By.XPath(Path)).Submit();
+            Driver!.FindElement(By.XPath(Args!.Path)).Submit();
         }
     }
 
@@ -82,14 +70,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
-        [JsonProperty("text"), Required]
-        public string? Text;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            Driver!.FindElement(By.XPath(Path)).SendKeys(Text);
+            Driver!.FindElement(By.XPath(Args!.Path)).SendKeys(Args!.Text);
         }
     }
 
@@ -97,13 +82,12 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
             var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Path)));
+            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Args!.Path)));
             var action = new Actions(Driver);
             action.MoveToElement(element).Perform();
         }
@@ -113,12 +97,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            Driver!.Navigate().GoToUrl(Path);
+            Driver!.Navigate().GoToUrl(Args!.Path);
         }
     }
 
@@ -126,12 +109,11 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("time"), Required]
-        public int Time;
+        public Args? Args { get; set; }
 
         public void Execute(int time)
         {
-            Driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Time);
+            Driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Args!.Time);
         }
     }
 
@@ -139,15 +121,12 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
-        [JsonProperty("time"), Required]
-        public int Time;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Time));
-            wait.Until(ExpectedConditions.ElementExists(By.XPath(Path)));
+            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Args!.Time));
+            wait.Until(ExpectedConditions.ElementExists(By.XPath(Args!.Path)));
         }
     }
 
@@ -155,15 +134,194 @@ namespace WebScraper.SeleniumCommands
     {
         [JsonIgnore]
         public IWebDriver? Driver { get; set; }
-        [JsonProperty("path"), Required]
-        public string? Path;
-        [JsonProperty("time"), Required]
-        public int Time;
+        public Args? Args { get; set; }
 
         public void Execute()
         {
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Time));
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Path)));
+            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Args!.Time));
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Args!.Path)));
+        }
+    }
+
+    public class SaveHtml : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public string Execute()
+        {
+            return Driver!.PageSource;
+        }
+    }
+
+    public class SaveTitle : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public string Execute()
+        {
+            return Driver!.Title;
+        }
+    }
+
+    public class ExecuteJavaScript : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        
+        public string Execute()
+        {
+            return (string)((IJavaScriptExecutor)Driver!).ExecuteScript("return document.title");
+        }
+    }
+    
+    public class ExecuteAsyncJavaScript : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public string Execute()
+        {
+            return (string)((IJavaScriptExecutor)Driver!).ExecuteAsyncScript("return document.title");
+        }
+    }
+
+    public class SaveCssValue : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        public string Execute()
+        {
+            return Driver!.FindElement(By.XPath(Args!.Path)).GetCssValue(Args!.Property);
+        }
+    }
+
+    public class SaveTagName : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public string Execute()
+        {
+            return Driver!.FindElement(By.XPath(Args!.Path)).TagName;
+        }
+    }
+
+    public class Maximize : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public void Execute()
+        {
+            Driver!.Manage().Window.Maximize();
+        }
+    }
+
+    public class Refresh : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public void Execute()
+        {
+            Driver!.Navigate().Refresh();
+        }
+    }
+    
+    public class Back : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public void Execute()
+        {
+            Driver!.Navigate().Back();
+        }
+    }
+    
+    public class Forward : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+
+        public void Execute()
+        {
+            Driver!.Navigate().Forward();
+        }
+    }
+
+    public class SendReturn : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        public void Execute()
+        {
+            Driver!.FindElement(By.XPath(Args!.Path)).SendKeys(Keys.Return);
+        }
+    }
+
+    public class DeleteAllCookies : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        
+        public void Execute()
+        {
+            Driver!.Manage().Cookies.DeleteAllCookies();
+        }
+    }
+
+    public class AcceptAlert : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        
+        public void Execute()
+        {
+            var alert = Driver!.SwitchTo().Alert();
+            alert.Accept();
+        }
+    }
+    
+    public class DismissAlert : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        
+        public void Execute()
+        {
+            var alert = Driver!.SwitchTo().Alert();
+            alert.Dismiss();
+        }
+    }
+    
+    public class SendKeysAlert : ICommand
+    {
+        [JsonIgnore]
+        public IWebDriver? Driver { get; set; }
+        public Args? Args { get; set; }
+        
+        public void Execute()
+        {
+            var alert = Driver!.SwitchTo().Alert();
+            alert.SendKeys(Args!.Text);
+            alert.Accept();
         }
     }
 }

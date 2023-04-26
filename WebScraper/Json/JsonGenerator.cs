@@ -13,7 +13,7 @@ public static class JsonGenerator
 {
     public static void GenerateJson(String path)
     {
-        Args.PrintVerbose("Generating JSON schema...");
+        Argument.PrintVerbose("Generating JSON schema...");
         var generator = new JSchemaGenerator()
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -23,10 +23,9 @@ public static class JsonGenerator
         };
 
         var schema = generator.Generate(typeof(Config));
-        var jsonString = schema.ToString().Replace(@"""properties"":", @"""additionalProperties"": false, ""properties"":");
-        
+
         using StreamWriter sw = File.CreateText(path);
-        sw.Write(jsonString);
-        Args.PrintVerbose($@"Done generating JSON schema '{path}'.");
+        sw.Write(schema);
+        Argument.PrintVerbose($@"Done generating JSON schema '{path}'.");
     }
 }

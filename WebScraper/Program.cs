@@ -11,7 +11,7 @@ namespace WebScraper
         {
             try
             {
-                Args.ParseArguments(args);
+                Argument.ParseArguments(args);
             }
             catch (Exception)
             {
@@ -25,41 +25,41 @@ namespace WebScraper
                 return ReturnCodes.ProjectPathError;
             }
 
-            if (!File.Exists(Paths.ConfigPath))
-            {
-                JsonGenerator.GenerateJson(Paths.ConfigPath);
-            }
-
-            if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
-            {
-                Console.Error.WriteLine("Config file is not valid");
-                return ReturnCodes.ConfigError;
-            }
+            // if (!File.Exists(Paths.ConfigPath))
+            // {
+            //     JsonGenerator.GenerateJson(Paths.ConfigPath);
+            // }
+            //
+            // if (!JsonValidator.Validate(Paths.ConfigPath, Args.GetFilename()))
+            // {
+            //     Console.Error.WriteLine("Config file is not valid");
+            //     return ReturnCodes.ConfigError;
+            // }
 
             Config? config;
             try
             {
-                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Args.GetFilename()));
-                Args.PrintVerbose("Config file deserialized");
+                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Argument.GetFilename()));
+                Argument.PrintVerbose("Config file deserialized");
             }
             catch (Exception e)
             {
-                Args.PrintVerbose(e.ToString());
-                Console.Error.WriteLine($@"Failed to deserialize JSON from file: '{Args.GetFilename()}");
+                Argument.PrintVerbose(e.ToString());
+                Console.Error.WriteLine($@"Failed to deserialize JSON from file: '{Argument.GetFilename()}");
                 return ReturnCodes.JsonError;
             }
 
             try
             {
-                Args.PrintVerbose("Running WebScraper...");
+                Argument.PrintVerbose("Running WebScraper...");
                 Scraper.Run(config);
             }
             catch (Exception e)
             {
-                Args.PrintVerbose("WebScraper finished with error." + e);
+                Argument.PrintVerbose("WebScraper finished with error." + Environment.NewLine + e);
                 return ReturnCodes.ScraperError;
             }
-            Args.PrintVerbose("WebScraper finished.");
+            Argument.PrintVerbose("WebScraper finished.");
             
             return 0;
         }

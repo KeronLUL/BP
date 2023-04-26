@@ -8,7 +8,7 @@ public static class JsonValidator
 {
     public static bool Validate(string pathToSchema, string pathToConfig)
     {
-        Args.PrintVerbose("Validating JSON schema...");
+        Argument.PrintVerbose("Validating JSON schema...");
 
         try
         {
@@ -18,7 +18,7 @@ public static class JsonValidator
             var schema = File.ReadAllText(pathToSchema);
             var jsonSchema = JSchema.Parse(schema);
 
-            Args.PrintVerbose("Done validating JSON schema.");
+            Argument.PrintVerbose("Done validating JSON schema.");
         
             return jsonConfig.IsValid(jsonSchema);
         }

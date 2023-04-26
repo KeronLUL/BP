@@ -6,19 +6,18 @@ using WebScraper.SeleniumDriver;
 
 namespace WebScraper;
 
-public class Scraper
+public static class Scraper
 {
     public static void Run(Config? config)
     {
         var driver = new SeleniumWebDriver();
         try
         {
-            Args.PrintVerbose($@"Setting up connection to {config!.Url}.");
+            Argument.PrintVerbose($@"Setting up connection to {config!.Url}.");
             driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Args.PrintVerbose(e.ToString());
             Console.Error.WriteLine($@"Can't connect to URL: '{config!.Url}'");
             driver.Quit();
             throw;
@@ -47,26 +46,27 @@ public class Scraper
                     var value = "";
                     try
                     {
-                        Args.PrintVerbose($@"Executing command {commandProperty.Name}.");
+                        Argument.PrintVerbose($@"Executing command {commandProperty.Name}.");
                         value = (string)method?.Invoke(commandInstance, null)!;
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
-                        Args.PrintVerbose(e.ToString());
                         Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}'");
+                        driver.Quit();
                         throw;
                     }
                     CreateOrRetrieveElement.SaveValue(command, commandProperty, website, value);
+                    
+                    Console.WriteLine(value);
                 }
             }
+
+            if (!config.Loop) continue;
             
-            if (config.Loop)
-            {
-                Args.PrintVerbose($@"Loop finished, waiting until next loop starts.");
-                Thread.Sleep(config.WaitTime * 1000);
-                driver.Close();
-                driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
-            }
+            Argument.PrintVerbose($@"Loop finished, waiting until next loop starts.");
+            Thread.Sleep(config.WaitTime * 1000);
+            driver.Close();
+            driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
         } while (config.Loop);
 
         driver.Quit();

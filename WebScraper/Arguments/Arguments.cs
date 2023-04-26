@@ -2,7 +2,7 @@
 
 namespace WebScraper.Arguments;
 
-public static class Args
+public static class Argument
 {
     private static string _filename = "";
     private static bool _verbose;
