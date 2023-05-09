@@ -39,7 +39,7 @@ internal sealed class ScraperService : IHostedService
             {
                 try
                 {
-                    Argument.ParseArguments(Environment.GetCommandLineArgs());
+                    Argument.ParseArguments(Environment.GetCommandLineArgs(), _logger);
                 }
                 catch (Exception)
                 {
@@ -54,13 +54,10 @@ internal sealed class ScraperService : IHostedService
                     _exitCode = ReturnCodes.ProjectPathError;
                     _appLifetime.StopApplication();
                 }
-    
-                if (!File.Exists(Paths.ConfigPath))
-                {
-                    JsonGenerator.GenerateJson(Paths.ConfigPath);
-                }
                 
-                if (!JsonValidator.Validate(Paths.ConfigPath, Argument.GetFilename()))
+                JsonGenerator.GenerateJson(Paths.ConfigPath, _logger);
+                
+                if (!JsonValidator.Validate(Paths.ConfigPath, Argument.GetFilename(), _logger))
                 {
                     _logger.LogError("Config file is not valid");
                     _exitCode = ReturnCodes.ConfigError;
@@ -85,11 +82,11 @@ internal sealed class ScraperService : IHostedService
                 try
                 {
                     _logger.LogInformation("Running WebScraper...");
-                    await Scraper.Run(config, commandList, _websiteFacade, _elementFacade);
+                    await Scraper.Run(config, commandList, _websiteFacade, _elementFacade, _logger);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogDebug("WebScraper finished with error." + Environment.NewLine + e);
+                    _logger.LogError("WebScraper finished with error." + Environment.NewLine + e);
                     _exitCode = ReturnCodes.ScraperError;
                     _appLifetime.StopApplication();
                 }

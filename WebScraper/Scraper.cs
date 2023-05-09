@@ -1,4 +1,5 @@
-﻿using WebScraper.Arguments;
+﻿using Microsoft.Extensions.Logging;
+using WebScraper.Arguments;
 using WebScraper.Database.Entities;
 using WebScraper.Database.Facades;
 using WebScraper.Database.Facades.Interfaces;
@@ -11,17 +12,18 @@ namespace WebScraper;
 
 public static class Scraper
 {
-    public static async Task Run(Config? config, List<object> commands, IWebsiteFacade websiteFacade, IElementFacade elementFacade)
+    public static async Task Run(Config? config, List<object> commands,
+        IWebsiteFacade websiteFacade, IElementFacade elementFacade, ILogger logger)
     {
         var driver = new SeleniumWebDriver();
         try
         {
-            Argument.PrintVerbose($@"Setting up connection to {config!.Url}.");
+            logger.LogInformation($@"Setting up connection to {config!.Url}.");
             driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
         }
         catch (Exception)
         {
-            await Console.Error.WriteLineAsync($@"Can't connect to URL: '{config!.Url}'");
+            logger.LogError($@"Can't connect to URL: '{config!.Url}'");
             driver.Quit();
             throw;
         }
@@ -42,13 +44,13 @@ public static class Scraper
                 Task<string>? task;
                 try
                 {
-                    Argument.PrintVerbose($@"Executing command {command.GetType().Name}.");
+                    logger.LogInformation($@"Executing command {command.GetType().Name}.");
                     task = (Task<string>)method?.Invoke(command, parameters)!;
                     await task.ConfigureAwait(false);
                 }
                 catch(Exception)
                 {
-                    await Console.Error.WriteLineAsync($@"Exception has been thrown when executing command: '{command.GetType().Name}'");
+                    logger.LogError($@"Exception has been thrown when executing command: '{command.GetType().Name}'");
                     driver.Quit();
                     throw;
                 }
@@ -56,14 +58,14 @@ public static class Scraper
                 if (command.GetType().Name.Contains("Save"))
                 {
                     var name = command!.GetType()!.GetProperty("Name")!.GetValue(command);
-                    //Args.PrintVerbose($@"Saving text {commandProperty.Name}.");
+                    logger.LogInformation($@"Saving value of command {command.GetType().Name}");
                     var ctx = new CreateOrUpdateElement(elementFacade);
                     ctx.CreateOrUpdate(website.Result, name!.ToString()!,task.Result);
                 }
             }
             if (!config.Loop) continue;
             
-            Argument.PrintVerbose($@"Loop finished, waiting until next loop starts.");
+            logger.LogInformation($@"Loop finished, waiting until next loop starts.");
             Thread.Sleep(config.WaitTime * 1000);
             driver.Close();
             driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
 using WebScraper.Arguments;
@@ -8,9 +9,9 @@ namespace WebScraper.Json;
 
 public static class JsonGenerator
 {
-    public static void GenerateJson(String path)
+    public static void GenerateJson(String path, ILogger logger)
     {
-        Argument.PrintVerbose("Generating JSON schema...");
+        logger.LogInformation("Generating JSON schema...");
         var generator = new JSchemaGenerator()
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -23,6 +24,6 @@ public static class JsonGenerator
 
         using StreamWriter sw = File.CreateText(path);
         sw.Write(schema);
-        Argument.PrintVerbose($@"Done generating JSON schema '{path}'.");
+        logger.LogInformation($@"Done generating JSON schema '{path}'.");
     }
 }

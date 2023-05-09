@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using WebScraper.Arguments;
 
@@ -6,9 +7,9 @@ namespace WebScraper.Json;
 
 public static class JsonValidator
 {
-    public static bool Validate(string pathToSchema, string pathToConfig)
+    public static bool Validate(string pathToSchema, string pathToConfig, ILogger logger)
     {
-        Argument.PrintVerbose("Validating JSON schema...");
+        logger.LogInformation("Validating JSON schema...");
 
         try
         {
@@ -18,13 +19,13 @@ public static class JsonValidator
             var schema = File.ReadAllText(pathToSchema);
             var jsonSchema = JSchema.Parse(schema);
 
-            Argument.PrintVerbose("Done validating JSON schema.");
+            logger.LogInformation("Done validating JSON schema.");
         
             return jsonConfig.IsValid(jsonSchema);
         }
         catch (Exception)
         {
-            Console.Error.WriteLine("Parsing of JSON config has failed");
+            logger.LogError("Parsing of JSON config has failed");
             return false;
         }
     }

@@ -1,13 +1,13 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Logging;
 
 namespace WebScraper.Arguments;
 
 public static class Argument
 {
     private static string _filename = "";
-    private static bool _verbose;
 
-    public static void ParseArguments(string[] args)
+    public static void ParseArguments(string[] args, ILogger logger)
     {
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
@@ -16,16 +16,11 @@ public static class Argument
                 {
                     if (!File.Exists(o.Filename))
                     {
-                        Console.Error.WriteLine($@"Invalid path to file {o.Filename}");
+                        logger.LogError($@"Invalid path to file {o.Filename}");
                         throw new FileNotFoundException();
                     }
                     _filename = o.Filename;
                     
-                }
-
-                if (o.Verbose)
-                {
-                    _verbose = true;
                 }
             });
     }
@@ -33,13 +28,5 @@ public static class Argument
     public static string GetFilename()
     {
         return _filename;
-    }
-
-    public static void PrintVerbose(string message)
-    {
-        if (_verbose)
-        {
-            Console.WriteLine(message);
-        }
     }
 }
