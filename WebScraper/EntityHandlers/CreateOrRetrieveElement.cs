@@ -1,43 +1,40 @@
-﻿using System.Reflection;
-using WebScraper.Arguments;
-using WebScraper.Database.Entities;
-using WebScraper.Database.EntityCreator;
+﻿using WebScraper.Database.Entities;
 using WebScraper.Database.Facades;
-using WebScraper.Json.Entities;
+using WebScraper.Database.Facades.Interfaces;
+using WebScraper.Database.Factories;
+using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper.EntityHandlers;
 
-public static class CreateOrRetrieveElement
+public sealed class CreateOrUpdateElement
 {
-    public static void SaveValue(Command command, PropertyInfo commandProperty, WebsiteEntity website, string value)
-    {
-        if (commandProperty.Name == "SaveText")
-        {
-            Args.PrintVerbose($@"Saving text {commandProperty.Name}.");
-            CreateOrRetrieve(website, command!.SaveText!.Args!.Name, value);
-        }
+    private readonly IElementFacade _elementFacade;
 
-        if (commandProperty.Name == "SaveAttribute")
-        {
-            Args.PrintVerbose($@"Saving attribute {command!.SaveAttribute!.Args!.Attribute}.");
-            CreateOrRetrieve(website, command!.SaveAttribute!.Args!.Name, value);
-        }
+    public CreateOrUpdateElement(
+        IElementFacade elementFacade)
+    {
+        _elementFacade = elementFacade;
     }
-
-    private static void CreateOrRetrieve(WebsiteEntity website, string? name, string? value)
+    
+    public async void CreateOrUpdate(WebsiteEntity website, string? name, string? value)
     {
-        var elementFacade = new ElementFacade();
-        var element = elementFacade.GetAsync(name, website.Id).Result;
+        var result = _elementFacade.GetAsync(name, website.Id);
         
-        if (element == null)
+        if (result.Result == null)
         {
-            element = ElementCreator.CreateElement(name, value , website.Id);
-            elementFacade.SaveAsync(element);
+            var entity = new ElementEntity()
+            {
+                Id = Guid.NewGuid(),
+                WebsiteId = website.Id,
+                Name = name,
+                Value = value
+            };
+            await _elementFacade.SaveAsync(entity);
         }
         else
         {
-            element.Value = value;
-            elementFacade.UpdateAsync(element);
+            result.Result.Value = value;
+            await _elementFacade.SaveAsync(result.Result);
         }
     }
 }

@@ -4,4 +4,5 @@ public static class Paths
 {
     public const string ConfigPath = "config.schema.json";
     public const string ProjectPath = "WebScraper.csproj";
+    public const string DbPath = "Data/webscraper.db";
 }

@@ -2,11 +2,11 @@
 
 public class Args
 {
-    public string? Attribute;
-    public string? Name;
-    public string? Path;
-    public string? Property;
-    public string? Script;
-    public string? Text;
-    public int Time;
+    public string? Attribute { get; set; }
+    public string? Name { get; set; }
+    public string? Path { get; set; }
+    public string? Property { get; set; }
+    public string? Script { get; set; }
+    public string? Text { get; set; }
+    public int Time { get; set; }
 }

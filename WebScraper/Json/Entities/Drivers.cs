@@ -4,5 +4,5 @@ public enum Drivers
 {
     Chrome,
     Firefox,
-    Industrial
+    Safari
 }

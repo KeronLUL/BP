@@ -1,0 +1,21 @@
+﻿{
+  "url": "https://refactoring.guru/design-patterns/command",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 10,
+  "commands": [
+    {
+      "name" : "Click",
+      "args" : {
+        "path" : "//a[@href='/design-patterns']"
+      }
+    },
+    {
+      "name" : "SaveText",
+      "args" : {
+        "path" : "//h3",
+        "name" : "testing"
+      }
+    }
+  ]
+}

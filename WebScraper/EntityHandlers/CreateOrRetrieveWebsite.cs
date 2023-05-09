@@ -1,23 +1,36 @@
 ﻿using WebScraper.Database.Entities;
-using WebScraper.Database.EntityCreator;
 using WebScraper.Database.Facades;
-using WebScraper.Json.Entities;
+using WebScraper.Database.Facades.Interfaces;
+using WebScraper.Database.Factories;
+using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper.EntityHandlers;
 
-public static class CreateOrRetrieveWebsite
+public sealed class CreateOrRetrieveWebsite
 {
-    public static WebsiteEntity CreateOrRetrieve(Config config)
+    private readonly IWebsiteFacade _websiteFacade;
+
+    public CreateOrRetrieveWebsite(
+        IWebsiteFacade websiteFacade)
     {
-        var websiteFacade = new WebsiteFacade();
+        _websiteFacade = websiteFacade;
+    }
+    
+    public async Task<WebsiteEntity> CreateOrRetrieve(string? url)
+    {
+        var result = _websiteFacade.GetAsync(url);
         
-        var website = websiteFacade.GetAsync(config.Url).Result;
-        if (website == null)
+        if (result.Result == null)
         {
-            website = WebsiteCreator.CreateWebsite(config!.Url);
-            websiteFacade.SaveAsync(website);
+            var entity = new WebsiteEntity()
+            {
+                Id = Guid.NewGuid(),
+                URL = url
+            };
+            await _websiteFacade.SaveAsync(entity);
+            return entity;
         }
 
-        return website;
+        return result.Result;
     }
 }

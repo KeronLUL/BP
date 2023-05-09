@@ -13,5 +13,5 @@ public class Config
     public string? Driver { get; set; }
     [Required, Range(typeof(decimal), "0", "1000000000000000000")]
     public int WaitTime { get; set; }
-    public List<Command>? Commands { get; set; }
+    public List<CommandConfig>? Commands { get; set; }
 }

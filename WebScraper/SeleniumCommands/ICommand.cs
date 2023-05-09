@@ -4,5 +4,5 @@ namespace WebScraper.SeleniumCommands;
 
 internal interface ICommand
 {
-    public IWebDriver? Driver { get; set; }
+    Task Execute(IWebDriver? driver);
 }

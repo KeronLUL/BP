@@ -1,37 +1,28 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebScraper.Database.Entities;
+using WebScraper.Database.Facades.Interfaces;
+using WebScraper.Database.Mappers;
+using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper.Database.Facades;
 
-public class WebsiteFacade
+public class WebsiteFacade :
+    FacadeBase<WebsiteEntity, WebsiteEntityMapper>, IWebsiteFacade
 {
+    public WebsiteFacade(
+        IUnitOfWorkFactory unitOfWorkFactory)
+        : base(unitOfWorkFactory)
+    {
+    }
+    
     public async Task<WebsiteEntity?> GetAsync(string? url)
     {
-        try
-        {
-            var ctx = new WebScraperDbContext();
-            var entity = await ctx.Websites.FirstOrDefaultAsync( i => i.URL == url);
-            return entity;
-        }
-        catch (DbUpdateException)
-        {
-            throw new InvalidOperationException("Retrieving entity failed.");
-        }
-    }
-
-    public async void SaveAsync(WebsiteEntity entity)
-    {
-        try
-        {
-            var ctx = new WebScraperDbContext();
-            ctx.Add(entity);
-            await ctx.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new InvalidOperationException("Saving entity failed.");
-        }
+        await using IUnitOfWork uow = UnitOfWorkFactory.Create();
+        IQueryable<WebsiteEntity> query = uow.GetRepository<WebsiteEntity, WebsiteEntityMapper>().Get();
+        WebsiteEntity? entity = await query.SingleOrDefaultAsync(e => e.URL == url);
+        
+        return entity;
     }
 }

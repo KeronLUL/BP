@@ -1,7 +1,7 @@
 {
   "$id": "Config",
   "type": "object",
-  "additionalProperties": false, "properties": {
+  "properties": {
     "url": {
       "type": "string",
       "format": "uri"
@@ -28,159 +28,36 @@
       "items": {
         "$id": "Command",
         "type": "object",
-        "additionalProperties": false, "properties": {
-          "click": {
-            "$id": "Click",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              }
-            }
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "saveText": {
-            "$id": "SaveText",
+          "args": {
+            "$id": "Args",
             "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "path",
-              "name"
-            ]
-          },
-          "saveAttribute": {
-            "$id": "SaveAttribute",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              },
+            "properties": {
               "attribute": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
-              }
-            },
-            "required": [
-              "path",
-              "attribute",
-              "name"
-            ]
-          },
-          "clear": {
-            "$id": "Clear",
-            "type": "object",
-            "additionalProperties": false, "properties": {
+              },
               "path": {
                 "type": "string"
-              }
-            },
-            "required": [
-              "path"
-            ]
-          },
-          "sendKeys": {
-            "$id": "SendKeys",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
+              },
+              "property": {
+                "type": "string"
+              },
+              "script": {
                 "type": "string"
               },
               "text": {
                 "type": "string"
-              }
-            },
-            "required": [
-              "path",
-              "text"
-            ]
-          },
-          "implicitWait": {
-            "$id": "ImplicitWait",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "time": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "time"
-            ]
-          },
-          "submit": {
-            "$id": "Submit",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "path"
-            ]
-          },
-          "navigate": {
-            "$id": "Navigate",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "path"
-            ]
-          },
-          "waitUntilExists": {
-            "$id": "WaitUntilExists",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
               },
               "time": {
                 "type": "integer"
               }
-            },
-            "required": [
-              "path",
-              "time"
-            ]
-          },
-          "waitUntilClickable": {
-            "$id": "WaitUntilClickable",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              },
-              "time": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "path",
-              "time"
-            ]
-          },
-          "moveToElement": {
-            "$id": "MoveToElement",
-            "type": "object",
-            "additionalProperties": false, "properties": {
-              "path": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "path"
-            ]
+            }
           }
         }
       }

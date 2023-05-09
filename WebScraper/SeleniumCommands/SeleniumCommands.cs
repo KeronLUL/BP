@@ -10,306 +10,266 @@ namespace WebScraper.SeleniumCommands
 {
     public class Click : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
+        public string? Path { get; set; }
 
-        public void Execute()
-        {
-            Driver!.FindElement(By.XPath(Args!.Path)).Click();
+        public Task Execute(IWebDriver? driver)
+        { 
+            driver!.FindElement(By.XPath(Path)).Click();
+            return Task.FromResult("");
         }
     }
     public class SaveText : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        public string Execute()
+        public string? Path { get; set; }
+        public string? Name { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.FindElement(By.XPath(Args!.Path)).Text;
+            return Task.FromResult(driver!.FindElement(By.XPath(Path)).Text);
         }
     }
 
     public class SaveAttribute : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public string Execute()
+        public string? Path { get; set; }
+        public string? Attribute { get; set; }
+        public string? Name { get; set; }
+    
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.FindElement(By.XPath(Args!.Path)).GetAttribute(Args!.Attribute);
+            return Task.FromResult(driver!.FindElement(By.XPath(Path)).GetAttribute(Attribute));
         }
     }
-
+    
     public class Clear : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+    
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.FindElement(By.XPath(Args!.Path)).Clear();
+            driver!.FindElement(By.XPath(Path)).Clear();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class Submit : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+    
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.FindElement(By.XPath(Args!.Path)).Submit();
+            driver!.FindElement(By.XPath(Path)).Submit();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class SendKeys : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+        public string? Text { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.FindElement(By.XPath(Args!.Path)).SendKeys(Args!.Text);
+            driver!.FindElement(By.XPath(Path)).SendKeys(Text);
+            return Task.FromResult(0);
         }
     }
-
+    
     public class MoveToElement : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+        
+        public Task Execute(IWebDriver? driver)
         {
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Args!.Path)));
-            var action = new Actions(Driver);
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Path)));
+            var action = new Actions(driver);
             action.MoveToElement(element).Perform();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class Navigate : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+        
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Navigate().GoToUrl(Args!.Path);
+            driver!.Navigate().GoToUrl(Path);
+            return Task.FromResult(0);
         }
     }
-
+    
     public class ImplicitWait : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute(int time)
+        public int Time { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Args!.Time);
+            driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Time);
+            return Task.FromResult(0);
         }
     }
-
+    
     public class WaitUntilExists : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+        public int Time { get; set; }
+        
+        public Task Execute(IWebDriver? driver)
         {
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Args!.Time));
-            wait.Until(ExpectedConditions.ElementExists(By.XPath(Args!.Path)));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
+            wait.Until(ExpectedConditions.ElementExists(By.XPath(Path)));
+            return Task.FromResult(0);
         }
     }
-
+    
     public class WaitUntilClickable : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public string? Path { get; set; }
+        public int Time { get; set; }
+    
+        public Task Execute(IWebDriver? driver)
         {
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Args!.Time));
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Args!.Path)));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Path)));
+            return Task.FromResult(0);
         }
     }
-
+    
     public class SaveHtml : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public string Execute()
+        public string? Name { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.PageSource;
+            return Task.FromResult(driver!.PageSource);
         }
     }
-
+    
     public class SaveTitle : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public string Execute()
+        public string? Name { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.Title;
+            return Task.FromResult(driver!.Title);
         }
     }
-
+    
     public class ExecuteJavaScript : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
+        public string? Script { get; set; }
         
-        public string Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            return (string)((IJavaScriptExecutor)Driver!).ExecuteScript(Args!.Script);
+            return Task.FromResult(((IJavaScriptExecutor)driver!).ExecuteScript(Script));
         }
     }
-
+    
     public class SaveCssValue : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        public string Execute()
+        public string? Path { get; set; }
+        public string? Property { get; set; }
+        public string? Name { get; set; }
+        
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.FindElement(By.XPath(Args!.Path)).GetCssValue(Args!.Property);
+            return Task.FromResult(driver!.FindElement(By.XPath(Path)).GetCssValue(Property));
         }
     }
-
+    
     public class SaveTagName : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public string Execute()
+        public string? Path { get; set; }
+        public string? Name { get; set; }
+        
+        public Task Execute(IWebDriver? driver)
         {
-            return Driver!.FindElement(By.XPath(Args!.Path)).TagName;
+            return Task.FromResult(driver!.FindElement(By.XPath(Path)).TagName);
         }
     }
-
+    
     public class Maximize : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Manage().Window.Maximize();
+            driver!.Manage().Window.Maximize();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class Refresh : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Navigate().Refresh();
+            driver!.Navigate().Refresh();
+            return Task.FromResult(0);
         }
     }
     
     public class Back : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Navigate().Back();
+            driver!.Navigate().Back();
+            return Task.FromResult(0);
         }
     }
     
     public class Forward : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Navigate().Forward();
+            driver!.Navigate().Forward();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class SendReturn : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        public void Execute()
+        public string? Path { get; set; }
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.FindElement(By.XPath(Args!.Path)).SendKeys(Keys.Return);
+            driver!.FindElement(By.XPath(Path)).SendKeys(Keys.Return);
+            return Task.FromResult(0);
         }
     }
-
+    
     public class DeleteAllCookies : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            Driver!.Manage().Cookies.DeleteAllCookies();
+            driver!.Manage().Cookies.DeleteAllCookies();
+            return Task.FromResult(0);
         }
     }
-
+    
     public class AcceptAlert : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            var alert = Driver!.SwitchTo().Alert();
+            var alert = driver!.SwitchTo().Alert();
             alert.Accept();
+            return Task.FromResult(0);
         }
     }
     
     public class DismissAlert : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
-        
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            var alert = Driver!.SwitchTo().Alert();
+            var alert = driver!.SwitchTo().Alert();
             alert.Dismiss();
+            return Task.FromResult(0);
         }
     }
     
     public class SendKeysAlert : ICommand
     {
-        [JsonIgnore]
-        public IWebDriver? Driver { get; set; }
-        public Args? Args { get; set; }
+        public string? Text { get; set; }
         
-        public void Execute()
+        public Task Execute(IWebDriver? driver)
         {
-            var alert = Driver!.SwitchTo().Alert();
-            alert.SendKeys(Args!.Text);
+            var alert = driver!.SwitchTo().Alert();
+            alert.SendKeys(Text);
             alert.Accept();
+            return Task.FromResult(0);
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using System.Reflection;
-using WebScraper.Arguments;
+﻿using WebScraper.Arguments;
+using WebScraper.Database.Entities;
+using WebScraper.Database.Facades;
+using WebScraper.Database.Facades.Interfaces;
+using WebScraper.Database.UnitOfWork;
 using WebScraper.EntityHandlers;
 using WebScraper.Json.Entities;
 using WebScraper.SeleniumDriver;
@@ -8,7 +11,7 @@ namespace WebScraper;
 
 public static class Scraper
 {
-    public static void Run(Config? config)
+    public static async Task Run(Config? config, List<object> commands, IWebsiteFacade websiteFacade, IElementFacade elementFacade)
     {
         var driver = new SeleniumWebDriver();
         try
@@ -18,49 +21,46 @@ public static class Scraper
         }
         catch (Exception)
         {
-            Console.Error.WriteLine($@"Can't connect to URL: '{config!.Url}'");
+            await Console.Error.WriteLineAsync($@"Can't connect to URL: '{config!.Url}'");
             driver.Quit();
             throw;
         }
-
-        var website = CreateOrRetrieveWebsite.CreateOrRetrieve(config);
+        
+        var websiteCtx = new CreateOrRetrieveWebsite(websiteFacade);
+        var website = websiteCtx.CreateOrRetrieve(config!.Url);
 
         do
         {
-            foreach (var command in config!.Commands!)
+            foreach (var command in commands)
             {
-                foreach (var commandProperty in command.GetType().GetProperties())
+                var method = command.GetType().GetMethod("Execute");
+                var parameters = new object[]
                 {
-                    var commandInstance = command.GetType().GetProperty(commandProperty.Name)!.GetValue(command, null);
-                    if (commandInstance == null)
-                        continue;
-                    
-                    commandInstance!.GetType().GetProperty("Driver")!.SetValue(commandInstance, driver.Driver);
+                    driver!.Driver!
+                };
 
-                    var assembly = Assembly.GetExecutingAssembly().GetTypes();
-                    var classObject = assembly.Where(name =>
-                            name.FullName == $@"WebScraper.SeleniumCommands.{commandProperty.Name}")
-                        .ToArray()[0];
-                    var method = classObject.GetMethod("Execute");
-                    
-                    var value = "";
-                    try
-                    {
-                        Argument.PrintVerbose($@"Executing command {commandProperty.Name}.");
-                        value = (string)method?.Invoke(commandInstance, null)!;
-                    }
-                    catch(Exception)
-                    {
-                        Console.Error.WriteLine($@"Exception has been thrown when executing command: '{commandProperty.Name}'");
-                        driver.Quit();
-                        throw;
-                    }
-                    CreateOrRetrieveElement.SaveValue(command, commandProperty, website, value);
-                    
-                    Console.WriteLine(value);
+                Task<string>? task;
+                try
+                {
+                    Argument.PrintVerbose($@"Executing command {command.GetType().Name}.");
+                    task = (Task<string>)method?.Invoke(command, parameters)!;
+                    await task.ConfigureAwait(false);
+                }
+                catch(Exception)
+                {
+                    await Console.Error.WriteLineAsync($@"Exception has been thrown when executing command: '{command.GetType().Name}'");
+                    driver.Quit();
+                    throw;
+                }
+
+                if (command.GetType().Name.Contains("Save"))
+                {
+                    var name = command!.GetType()!.GetProperty("Name")!.GetValue(command);
+                    //Args.PrintVerbose($@"Saving text {commandProperty.Name}.");
+                    var ctx = new CreateOrUpdateElement(elementFacade);
+                    ctx.CreateOrUpdate(website.Result, name!.ToString()!,task.Result);
                 }
             }
-
             if (!config.Loop) continue;
             
             Argument.PrintVerbose($@"Loop finished, waiting until next loop starts.");

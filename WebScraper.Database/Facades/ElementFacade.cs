@@ -1,52 +1,29 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebScraper.Database.Entities;
+using WebScraper.Database.Facades.Interfaces;
+using WebScraper.Database.Mappers;
+using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper.Database.Facades;
 
-public class ElementFacade
+public class ElementFacade :
+    FacadeBase<ElementEntity, ElementEntityMapper>, IElementFacade
 {
-    public async Task<ElementEntity?> GetAsync(string? name, Guid websiteId)
+    public ElementFacade(
+        IUnitOfWorkFactory unitOfWorkFactory)
+        : base(unitOfWorkFactory)
     {
-        try
-        {
-            var ctx = new WebScraperDbContext();
-            var entity = await ctx.Elements.FirstOrDefaultAsync(i => i.Name == name && i.WebsiteId == websiteId );
-            return entity;
-        }
-        catch (DbUpdateException)
-        {
-            throw new InvalidOperationException("Retrieving entity failed.");
-        }
-    }
-
-    public async void SaveAsync(ElementEntity entity)
-    {
-        try
-        {
-            var ctx = new WebScraperDbContext();
-            ctx.Add(entity);
-            await ctx.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new InvalidOperationException("Saving entity failed.");
-        }
     }
     
-    public async void UpdateAsync(ElementEntity entity)
+    public async Task<ElementEntity?> GetAsync(string? name, Guid websiteId)
     {
-        try
-        {
-            var ctx = new WebScraperDbContext();
-            ctx.Update(entity);
-            await ctx.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new InvalidOperationException("Updating entity failed.");
-        }
-
+        await using IUnitOfWork uow = UnitOfWorkFactory.Create();
+        IQueryable<ElementEntity> query = uow.GetRepository<ElementEntity, ElementEntityMapper>().Get();
+        ElementEntity? entity = await query.SingleOrDefaultAsync(e => e.Name == name && e.WebsiteId == websiteId);
+        
+        return entity;
     }
 }

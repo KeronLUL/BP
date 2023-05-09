@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Schema;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
 using WebScraper.Arguments;
@@ -19,7 +16,7 @@ public static class JsonGenerator
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             SchemaIdGenerationHandling = SchemaIdGenerationHandling.TypeName,
             DefaultRequired = Required.DisallowNull,
-            SchemaReferenceHandling = SchemaReferenceHandling.None,
+            SchemaReferenceHandling = SchemaReferenceHandling.Arrays,
         };
 
         var schema = generator.Generate(typeof(Config));
