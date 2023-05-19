@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class DeleteAllCookies : ICommand
+public class DeleteAllCookies : ICommand<int>
 {
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.Manage().Cookies.DeleteAllCookies();
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

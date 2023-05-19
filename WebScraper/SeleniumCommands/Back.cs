@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Back : ICommand
+public class Back : ICommand<int>
 {
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.Navigate().Back();
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

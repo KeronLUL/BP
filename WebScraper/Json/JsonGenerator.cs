@@ -2,14 +2,13 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
-using WebScraper.Arguments;
 using WebScraper.Json.Entities;
 
 namespace WebScraper.Json;
 
 public static class JsonGenerator
 {
-    public static void GenerateJson(String path, ILogger logger)
+    public static void GenerateJsonSchema(String path, ILogger logger)
     {
         logger.LogInformation("Generating JSON schema...");
         var generator = new JSchemaGenerator()

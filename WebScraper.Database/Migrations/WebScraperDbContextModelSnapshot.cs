@@ -26,6 +26,9 @@ namespace WebScraper.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Timestamp")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Value")
                         .HasColumnType("TEXT");
 

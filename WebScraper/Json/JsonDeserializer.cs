@@ -1,13 +1,15 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
+using WebScraper.Arguments;
 using WebScraper.Json.Entities;
 
 namespace WebScraper.Json;
 
 public static class JsonDeserializer
 {
-    public static void Deserialize(ref List<object> list, Config? config)
+    public static Config Deserialize(ref List<object> list)
     {
+        var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Argument.GetFilename()));
         for (int index = 0; index < config!.Commands!.Count; index++)
         {
             var assembly = Assembly.GetExecutingAssembly().GetTypes();
@@ -17,16 +19,17 @@ public static class JsonDeserializer
                 .ToArray()[0];
 
             var command = Activator.CreateInstance(classObject);
-            var arguments = JsonConvert.DeserializeObject<Args>(JsonConvert.SerializeObject(config.Commands[index].Args));
             foreach (var property in classObject.GetProperties())
             {
-                foreach (var arg in arguments!.GetType().GetProperties())
+                foreach (var arg in config.Commands[index].Args!)
                 {
-                    if (property.Name != arg.Name) continue;
-                    property.SetValue(command, arg.GetValue(arguments));
+                    if (property.Name.Equals(arg.Key, StringComparison.OrdinalIgnoreCase)) //int conversion needed
+                        property.SetValue(command, arg.Value);
                 }
             }
             list.Add(command!);
         }
+
+        return config;
     }
 }

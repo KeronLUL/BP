@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class ImplicitWait : ICommand
+public class ImplicitWait : ICommand<int>
 {
     public int Time { get; set; }
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Time);
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

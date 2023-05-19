@@ -20,7 +20,6 @@ public static class Argument
                         throw new FileNotFoundException();
                     }
                     _filename = o.Filename;
-                    
                 }
             });
     }

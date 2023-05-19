@@ -2,14 +2,14 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class SaveAttribute : ICommand
+public class SaveAttribute : ICommand<string>
 {
     public string? Path { get; set; }
     public string? Attribute { get; set; }
     public string? Name { get; set; }
     
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<string> Execute(IWebDriver? driver)
     {
-        return Task.FromResult(driver!.FindElement(By.XPath(Path)).GetAttribute(Attribute));
+        return ValueTask.FromResult(driver!.FindElement(By.XPath(Path)).GetAttribute(Attribute));
     }
 }

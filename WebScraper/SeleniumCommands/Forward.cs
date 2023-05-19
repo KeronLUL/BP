@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Forward : ICommand
+public class Forward : ICommand<int>
 {
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.Navigate().Forward();
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

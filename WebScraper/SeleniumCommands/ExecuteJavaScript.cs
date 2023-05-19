@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class ExecuteJavaScript : ICommand
+public class ExecuteJavaScript : ICommand<string?>
 {
     public string? Script { get; set; }
         
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
-        return Task.FromResult(((IJavaScriptExecutor)driver!).ExecuteScript(Script));
+        return ValueTask.FromResult(((IJavaScriptExecutor)driver!).ExecuteScript(Script).ToString());
     }
 }

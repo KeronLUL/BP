@@ -2,13 +2,13 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Submit : ICommand
+public class Submit : ICommand<int>
 {
     public string? Path { get; set; }
     
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.FindElement(By.XPath(Path)).Submit();
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

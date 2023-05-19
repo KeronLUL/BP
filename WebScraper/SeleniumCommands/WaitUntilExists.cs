@@ -4,15 +4,15 @@ using SeleniumExtras.WaitHelpers;
 
 namespace WebScraper.SeleniumCommands;
 
-public class WaitUntilExists : ICommand
+public class WaitUntilExists : ICommand<int>
 {
     public string? Path { get; set; }
     public int Time { get; set; }
         
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
         wait.Until(ExpectedConditions.ElementExists(By.XPath(Path)));
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

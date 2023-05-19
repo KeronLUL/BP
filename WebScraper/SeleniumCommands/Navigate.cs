@@ -2,13 +2,13 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Navigate : ICommand
+public class Navigate : ICommand<int>
 {
     public string? Path { get; set; }
         
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         driver!.Navigate().GoToUrl(Path);
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

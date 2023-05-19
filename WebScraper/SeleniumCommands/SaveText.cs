@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class SaveText : ICommand
+public class SaveText : ICommand<string>
 {
     public string? Path { get; set; }
     public string? Name { get; set; }
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<string> Execute(IWebDriver? driver)
     {
-        return Task.FromResult(driver!.FindElement(By.XPath(Path)).Text);
+        return ValueTask.FromResult(driver!.FindElement(By.XPath(Path)).Text);
     }
 }

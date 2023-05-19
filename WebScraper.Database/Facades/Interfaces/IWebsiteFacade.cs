@@ -6,5 +6,5 @@ namespace WebScraper.Database.Facades.Interfaces;
 
 public interface IWebsiteFacade : IFacade<WebsiteEntity>
 {
-    Task<WebsiteEntity?> GetAsync(string? url);
+    Task<WebsiteEntity?> SaveWebsiteAsync(string? url);
 }

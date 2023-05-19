@@ -55,7 +55,7 @@ internal sealed class ScraperService : IHostedService
                     _appLifetime.StopApplication();
                 }
                 
-                JsonGenerator.GenerateJson(Paths.ConfigPath, _logger);
+                JsonGenerator.GenerateJsonSchema(Paths.ConfigPath, _logger);
                 
                 if (!JsonValidator.Validate(Paths.ConfigPath, Argument.GetFilename(), _logger))
                 {
@@ -67,8 +67,7 @@ internal sealed class ScraperService : IHostedService
                 var commandList = new List<object>();
                 try
                 {
-                    config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Argument.GetFilename()));
-                    JsonDeserializer.Deserialize(ref commandList, config);
+                    config = JsonDeserializer.Deserialize(ref commandList);
                     _logger.LogDebug("Config file deserialized");
                 }
                 catch (Exception e)

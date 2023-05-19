@@ -11,7 +11,7 @@ using WebScraper.Database;
 namespace WebScraper.Database.Migrations
 {
     [DbContext(typeof(WebScraperDbContext))]
-    [Migration("20230414132735_InitialCreate")]
+    [Migration("20230519130913_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,6 +27,9 @@ namespace WebScraper.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Timestamp")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")

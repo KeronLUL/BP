@@ -1,9 +1,7 @@
-﻿using WebScraper.SeleniumCommands;
-
-namespace WebScraper.Json.Entities;
+﻿namespace WebScraper.Json.Entities;
 
 public class CommandConfig
 {
     public string? Name { get; set; }
-    public Args? Args { get; set; }
+    public IDictionary<string, string>? Args { get; set; }
 }

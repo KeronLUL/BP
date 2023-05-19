@@ -5,16 +5,16 @@ using SeleniumExtras.WaitHelpers;
 
 namespace WebScraper.SeleniumCommands;
 
-public class MoveToElement : ICommand
+public class MoveToElement : ICommand<int>
 {
     public string? Path { get; set; }
         
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<int> Execute(IWebDriver? driver)
     {
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Path)));
         var action = new Actions(driver);
         action.MoveToElement(element).Perform();
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

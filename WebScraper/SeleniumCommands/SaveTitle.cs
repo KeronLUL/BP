@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class SaveTitle : ICommand
+public class SaveTitle : ICommand<string>
 {
     public string? Name { get; set; }
-    public Task Execute(IWebDriver? driver)
+    public ValueTask<string> Execute(IWebDriver? driver)
     {
-        return Task.FromResult(driver!.Title);
+        return ValueTask.FromResult(driver!.Title);
     }
 }

@@ -6,7 +6,6 @@ using WebScraper.Database;
 using WebScraper.Database.Facades;
 using WebScraper.Database.Facades.Interfaces;
 using WebScraper.Database.Factories;
-using WebScraper.Database.Mappers;
 using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper
