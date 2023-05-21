@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Refresh : ICommand<int>
+public class Refresh : ICommand
 {
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Navigate().Refresh();
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

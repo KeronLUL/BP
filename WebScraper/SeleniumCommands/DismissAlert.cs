@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class DismissAlert : ICommand<int>
+public class DismissAlert : ICommand
 {
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         var alert = driver!.SwitchTo().Alert();
         alert.Dismiss();
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

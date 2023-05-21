@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class SendReturn : ICommand<int>
+public class SendReturn : ICommand
 {
     public string? Path { get; set; }
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.FindElement(By.XPath(Path)).SendKeys(Keys.Return);
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

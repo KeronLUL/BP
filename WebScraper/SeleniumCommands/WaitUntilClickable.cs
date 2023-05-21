@@ -4,15 +4,15 @@ using SeleniumExtras.WaitHelpers;
 
 namespace WebScraper.SeleniumCommands;
 
-public class WaitUntilClickable : ICommand<int>
+public class WaitUntilClickable : ICommand
 {
     public string? Path { get; set; }
     public int Time { get; set; }
     
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
         wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Path)));
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

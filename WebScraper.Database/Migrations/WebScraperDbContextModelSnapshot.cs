@@ -39,9 +39,6 @@ namespace WebScraper.Database.Migrations
 
                     b.HasIndex("WebsiteId");
 
-                    b.HasIndex("Name", "WebsiteId")
-                        .IsUnique();
-
                     b.ToTable("Elements");
                 });
 

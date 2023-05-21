@@ -2,7 +2,7 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class ExecuteJavaScript : ICommand<string?>
+public class ExecuteJavaScript : ICommand
 {
     public string? Script { get; set; }
         

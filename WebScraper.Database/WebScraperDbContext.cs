@@ -25,9 +25,5 @@ public class WebScraperDbContext : DbContext
         modelBuilder.Entity<WebsiteEntity>()
             .HasIndex(i => i.URL)  
             .IsUnique();
-
-        modelBuilder.Entity<ElementEntity>()
-            .HasIndex(i => new {i.Name, i.WebsiteId})
-            .IsUnique();
     }
 }

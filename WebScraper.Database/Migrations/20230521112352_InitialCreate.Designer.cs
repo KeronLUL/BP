@@ -11,7 +11,7 @@ using WebScraper.Database;
 namespace WebScraper.Database.Migrations
 {
     [DbContext(typeof(WebScraperDbContext))]
-    [Migration("20230519130913_InitialCreate")]
+    [Migration("20230521112352_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -41,9 +41,6 @@ namespace WebScraper.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("WebsiteId");
-
-                    b.HasIndex("Name", "WebsiteId")
-                        .IsUnique();
 
                     b.ToTable("Elements");
                 });

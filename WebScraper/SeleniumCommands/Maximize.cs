@@ -2,11 +2,11 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Maximize : ICommand<int>
+public class Maximize : ICommand
 {
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Manage().Window.Maximize();
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

@@ -34,6 +34,7 @@ public class WebsiteFacade :
                 URL = url
             };
             await repository.InsertAsync(entity);
+            await uow.CommitAsync();
             return entity;
         }
         return entity;

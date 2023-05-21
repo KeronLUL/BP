@@ -32,7 +32,7 @@ public static class Scraper
     }
 
     private static async ValueTask SaveCommand(ILogger logger, object command, IElementFacade elementFacade,
-        IEntity website, string? value) //ValueTask
+        IEntity website, string? value)
     {
         logger.LogInformation($@"Saving value of command {command.GetType().Name}");
         

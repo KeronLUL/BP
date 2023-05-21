@@ -45,12 +45,6 @@ namespace WebScraper.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Elements_Name_WebsiteId",
-                table: "Elements",
-                columns: new[] { "Name", "WebsiteId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Elements_WebsiteId",
                 table: "Elements",
                 column: "WebsiteId");

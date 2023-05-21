@@ -2,7 +2,7 @@
 
 namespace WebScraper.SeleniumCommands;
 
-internal interface ICommand<T>
+internal interface ICommand
 {
-    ValueTask<T> Execute(IWebDriver? driver);
+    ValueTask<string?> Execute(IWebDriver? driver);
 }

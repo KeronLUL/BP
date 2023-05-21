@@ -2,12 +2,12 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class AcceptAlert : ICommand<int>
+public class AcceptAlert : ICommand
 {
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         var alert = driver!.SwitchTo().Alert();
         alert.Accept();
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }

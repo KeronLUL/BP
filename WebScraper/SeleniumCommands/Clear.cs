@@ -2,13 +2,13 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class Clear : ICommand<int>
+public class Clear : ICommand
 {
     public string? Path { get; set; }
     
-    public ValueTask<int> Execute(IWebDriver? driver)
+    public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.FindElement(By.XPath(Path)).Clear();
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult("")!;
     }
 }
