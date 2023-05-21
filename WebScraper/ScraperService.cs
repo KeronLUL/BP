@@ -62,7 +62,7 @@ internal sealed class ScraperService : IHostedService
                     _logger.LogError("Config file is not valid");
                     _exitCode = ReturnCodes.ConfigError;
                 }
-
+                
                 Config? config = null;
                 var commandList = new List<object>();
                 try
