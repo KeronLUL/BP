@@ -61,18 +61,18 @@ internal sealed class ScraperService : IHostedService
                 {
                     _logger.LogError("Config file is not valid");
                     _exitCode = ReturnCodes.ConfigError;
+                    _appLifetime.StopApplication();
                 }
                 
                 Config? config = null;
                 var commandList = new List<object>();
                 try
                 {
-                    config = JsonDeserializer.Deserialize(ref commandList);
+                    config = JsonDeserializer.Deserialize(ref commandList, _logger);
                     _logger.LogDebug("Config file deserialized");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    _logger.LogDebug(e.ToString());
                     _logger.LogError($@"Failed to deserialize JSON from file: '{Argument.GetFilename()}");
                     _exitCode = ReturnCodes.JsonError;
                     _appLifetime.StopApplication();

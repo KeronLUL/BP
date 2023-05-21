@@ -3,5 +3,5 @@
 public class CommandConfig
 {
     public string? Name { get; set; }
-    public IDictionary<string, string>? Args { get; set; }
+    public IDictionary<string, object>? Args { get; set; }
 }

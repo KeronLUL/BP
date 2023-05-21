@@ -11,6 +11,13 @@
       }
     },
     {
+      "name" : "WaitUntilExists",
+      "args" : {
+        "path" : "//h3",
+        "time" : 10
+      }
+    },
+    {
       "name" : "SaveText",
       "args" : {
         "path" : "//h3",
