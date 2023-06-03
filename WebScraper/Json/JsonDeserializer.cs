@@ -10,6 +10,7 @@ public static class JsonDeserializer
 {
     public static Config? Deserialize(ref List<object> list, ILogger logger)
     {
+        logger.LogInformation("Deserializing config...");
         var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Argument.GetFilename()));
 
         for (var index = 0; index < config!.Commands!.Count; index++)
@@ -33,7 +34,7 @@ public static class JsonDeserializer
             }
             list.Add(command!);
         }
-
+        logger.LogInformation("Deserializing done.");
         return config;
     }
 }

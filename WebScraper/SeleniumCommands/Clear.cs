@@ -9,6 +9,6 @@ public class Clear : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.FindElement(By.XPath(Path)).Clear();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

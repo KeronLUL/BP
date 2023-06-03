@@ -7,6 +7,6 @@ public class Maximize : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Manage().Window.Maximize();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

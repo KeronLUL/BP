@@ -8,6 +8,6 @@ public class SendReturn : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.FindElement(By.XPath(Path)).SendKeys(Keys.Return);
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

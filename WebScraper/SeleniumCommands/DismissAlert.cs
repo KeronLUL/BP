@@ -8,6 +8,6 @@ public class DismissAlert : ICommand
     {
         var alert = driver!.SwitchTo().Alert();
         alert.Dismiss();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

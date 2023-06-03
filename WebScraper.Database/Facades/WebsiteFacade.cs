@@ -19,7 +19,7 @@ public class WebsiteFacade :
     {
     }
 
-    public async Task<WebsiteEntity?> SaveWebsiteAsync(string? url)
+    public async Task<WebsiteEntity> SaveWebsiteAsync(string? url)
     {
         await using IUnitOfWork uow = UnitOfWorkFactory.Create();
         IQueryable<WebsiteEntity> query = uow.GetRepository<WebsiteEntity, WebsiteEntityMapper>().Get();

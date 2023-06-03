@@ -64,7 +64,7 @@ internal sealed class ScraperService : IHostedService
                     _appLifetime.StopApplication();
                 }
                 
-                Config? config = null;
+                /*Config? config = null;
                 var commandList = new List<object>();
                 try
                 {
@@ -88,7 +88,7 @@ internal sealed class ScraperService : IHostedService
                     _logger.LogError("WebScraper finished with error." + Environment.NewLine + e);
                     _exitCode = ReturnCodes.ScraperError;
                     _appLifetime.StopApplication();
-                }
+                }*/
                 _logger.LogInformation("WebScraper finished.");
                 
                 _exitCode = 0;

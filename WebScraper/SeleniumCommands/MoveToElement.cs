@@ -15,6 +15,6 @@ public class MoveToElement : ICommand
         var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(Path)));
         var action = new Actions(driver);
         action.MoveToElement(element).Perform();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

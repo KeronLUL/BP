@@ -11,6 +11,6 @@ public class SendKeysAlert : ICommand
         var alert = driver!.SwitchTo().Alert();
         alert.SendKeys(Text);
         alert.Accept();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

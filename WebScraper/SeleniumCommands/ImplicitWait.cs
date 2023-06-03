@@ -8,6 +8,6 @@ public class ImplicitWait : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Time);
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

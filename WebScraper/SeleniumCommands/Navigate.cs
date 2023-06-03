@@ -9,6 +9,6 @@ public class Navigate : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Navigate().GoToUrl(Path);
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

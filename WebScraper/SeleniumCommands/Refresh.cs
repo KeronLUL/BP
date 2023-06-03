@@ -7,6 +7,6 @@ public class Refresh : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Navigate().Refresh();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

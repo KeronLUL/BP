@@ -15,7 +15,7 @@ public static class Scraper
         try
         {
             logger.LogInformation($@"Setting up connection to {config!.Url}.");
-            driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
+            driver.SetUp(config.Url, config.Driver ?? "Firefox");
         }
         catch (Exception)
         {
@@ -26,7 +26,7 @@ public static class Scraper
         return driver;
     }
 
-    private static async ValueTask<WebsiteEntity?> GetWebsite(IWebsiteFacade websiteFacade, string url)
+    private static async ValueTask<WebsiteEntity> GetWebsite(IWebsiteFacade websiteFacade, string url)
     {
         return await websiteFacade.SaveWebsiteAsync(url);
     }
@@ -49,7 +49,7 @@ public static class Scraper
         await elementFacade.SaveAsync(entity);
     }
 
-    private static async ValueTask<string> ExecuteCommand(ILogger logger, object command, SeleniumWebDriver driver)
+    private static async ValueTask<string?> ExecuteCommand(ILogger logger, object command, SeleniumWebDriver driver)
     {
         var method = command.GetType().GetMethod("Execute");
         var parameters = new object[]
@@ -61,7 +61,7 @@ public static class Scraper
         try
         {
             logger.LogInformation($@"Executing command {command.GetType().Name}.");
-            result =  await (ValueTask<string>)method?.Invoke(command, parameters)!;
+            result =  await (ValueTask<string?>)method?.Invoke(command, parameters)!;
         }
         catch(Exception)
         {
@@ -87,15 +87,15 @@ public static class Scraper
 
                 if (command.GetType().Name.Contains("Save"))
                 {
-                    await SaveCommand(logger, command, elementFacade, website!, result);
+                    await SaveCommand(logger, command, elementFacade, website, result);
                 }
             }
-            if (!config!.Loop) continue;
+            if (!config.Loop) continue;
             
             logger.LogInformation($@"Loop finished, waiting until next loop starts.");
             await Task.Delay(config.WaitTime);
             driver.Close();
-            driver.SetUp(config!.Url, config!.Driver != null ? config!.Driver : "Firefox");
+            driver.SetUp(config.Url, config.Driver ?? "Firefox");
         } while (config.Loop);
 
         driver.Quit();

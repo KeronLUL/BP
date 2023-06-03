@@ -7,6 +7,6 @@ public class Forward : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
         driver!.Navigate().Forward();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

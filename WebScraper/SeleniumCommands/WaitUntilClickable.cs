@@ -13,6 +13,6 @@ public class WaitUntilClickable : ICommand
     {
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
         wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(Path)));
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

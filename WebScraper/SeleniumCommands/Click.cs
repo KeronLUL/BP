@@ -9,6 +9,6 @@ public class Click : ICommand
     public ValueTask<string?> Execute(IWebDriver? driver)
     { 
         driver!.FindElement(By.XPath(Path)).Click();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

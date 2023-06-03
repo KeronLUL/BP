@@ -13,6 +13,6 @@ public class WaitUntilExists : ICommand
     {
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Time));
         wait.Until(ExpectedConditions.ElementExists(By.XPath(Path)));
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }

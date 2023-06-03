@@ -75,20 +75,13 @@ public static class JsonGenerator
         IDictionary<string, object> commands = new Dictionary<string, object>();
         IDictionary<string, object> items = new Dictionary<string, object>();
 
-        var drivers = new List<string>
+        var drivers = new List<string> //enum
         {
             "Chrome",
             "Firefox",
             "Safari"
         };
-
-        var requiredFields = new List<string>
-        {
-            "url",
-            "loop",
-            "waitTime"
-        };
-
+        
         var anyOf = new List<object>();
 
         url.Add("type", "string");
@@ -114,6 +107,11 @@ public static class JsonGenerator
 
         config.Add("type", "object");
         config.Add("properties", properties);
+
+        var requiredFields = new List<string>();
+        requiredFields.AddRange(properties.Select(property  => property.Key )
+                                                .Where(i => i != "driver" && i != "commands"));
+
         config.Add("required", requiredFields);
 
         using var sw = File.CreateText(path);

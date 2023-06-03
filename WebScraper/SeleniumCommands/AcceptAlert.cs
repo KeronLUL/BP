@@ -8,6 +8,6 @@ public class AcceptAlert : ICommand
     {
         var alert = driver!.SwitchTo().Alert();
         alert.Accept();
-        return ValueTask.FromResult("")!;
+        return ValueTask.FromResult<string?>(null);
     }
 }
