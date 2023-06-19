@@ -1,0 +1,58 @@
+﻿@page "/"
+@using WebApp.Models
+@using Newtonsoft.Json
+
+@inject IJSRuntime JsRuntime
+
+<h1>Configuration file builder</h1>
+
+<EditForm Model="@config" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            URL:
+            <InputText @bind-Value="config.url" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Loop:
+            <InputCheckbox @bind-Value="config.loop" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Driver (optional):
+            <InputSelect @bind-Value="config.driver">
+                <option value="">Select driver ...</option>
+                <option value="Firefox">Firefox</option>
+                <option value="Chrome">Chrome</option>
+                <option value="Safari">Safari</option>
+            </InputSelect>
+        </label>
+    </p>
+    <p>
+        <label>
+            WaitTime
+            <InputNumber @bind-Value="config.waitTime" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private Config config = new Config();
+
+    private void HandleValidSubmit()
+    {
+        DownloadFile();
+    }
+
+    private async void DownloadFile()
+    {
+        await JsRuntime.InvokeAsync<object>("saveFile", "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+    }
+}
