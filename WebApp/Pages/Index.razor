@@ -1,58 +1,187 @@
 ﻿@page "/"
-@using WebApp.Models
+@using System.Reflection
 @using Newtonsoft.Json
+@using WebApp.Models
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 
 @inject IJSRuntime JsRuntime
 
-<h1>Configuration file builder</h1>
+<h3>Configuration file builder</h3>
+
+<style>
+    h3 {
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    form {
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group .form-group-property {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 75px;
+    }
+    
+    .form-group .form-group-property label {
+            margin-top: 5px;
+        }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
+
+    .form-control {
+        border-radius: 3px;
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+    
+    .form-control select {
+        padding: 10px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        width: 100%;
+        height: 40px;
+     }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .btn-container button {
+        margin: 0 5px;
+    }
+</style>
 
 <EditForm Model="@config" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
+    
+    <div class="form-group">
+        <label for="configName">Configuration file name</label>
+        <input type="text" id="configName" class="form-control" @bind="@configName"/>
+    </div>
+    
+    <div class="form-group">
+        <label for="url">URL</label>
+        <input type="text" id="url" class="form-control" @bind="@config.url"/>
+    </div>
+    
+    <div class="form-group">
+        <label for="loop">Loop</label>
+        <input type="checkbox" id="loop" class="form-check-input" @bind="@config.loop"/>
+    </div>
+    
+    <div class="form-group">
+        <label for="waitTime">Wait Time</label>
+        <input type="number" id="waitTime" class="form-control" @bind="@config.waitTime"/>
+    </div>
+    
+    <div class="form-group">
+    <label for="driver">Driver</label>
+    <select class="form-control" id="driver" @bind="@config.driver">
+        <option value="">Select an option...</option>
+        <option value="Firefox">Firefox</option>
+        <option value="Chrome">Chrome</option>
+        <option value="Safari">Safari</option>
+    </select>
+    </div>
 
-    <p>
-        <label>
-            URL:
-            <InputText @bind-Value="config.url" />
-        </label>
-    </p>
-    <p>
-        <label>
-            Loop:
-            <InputCheckbox @bind-Value="config.loop" />
-        </label>
-    </p>
-    <p>
-        <label>
-            Driver (optional):
-            <InputSelect @bind-Value="config.driver">
-                <option value="">Select driver ...</option>
-                <option value="Firefox">Firefox</option>
-                <option value="Chrome">Chrome</option>
-                <option value="Safari">Safari</option>
-            </InputSelect>
-        </label>
-    </p>
-    <p>
-        <label>
-            WaitTime
-            <InputNumber @bind-Value="config.waitTime" />
-        </label>
-    </p>
+    @foreach (var field in commandFields)
+    {
+        <div class="form-group">
+            <label for="@field.Id">Command</label>
+            <select id="@field.Id" class="form-control" @bind="@field.Value">
+                <option value="">Select...</option>
+                @foreach (var cmd in GetCommands())
+                {
+                    <option value="@cmd">@cmd</option>
+                }
+            </select>
+  
+            <div class="form-group-property">
+                @foreach (var property in GetProperties(field.Value))
+                {
+                    <label for="@textFieldValue">@property.Name</label>
+                    @if (property.PropertyType == typeof(int))
+                    {
+                        <input type="number" id="@textFieldValue" class="form-control" @bind="@textFieldValue"/>
+                    }
+                    else
+                    {
+                        <input type="text" id="@textFieldValue" class="form-control" @bind="@textFieldValue"/>
+                    }
+                }
+            </div>
+        </div>
+    }
 
-    <button type="submit">Submit</button>
+    <div class="btn-container">
+        <button type="button" class="btn btn-primary mt-3" @onclick="AddFormField">Add command</button>
+        <button type="submit" class="btn btn-primary mt-3">Save config</button>
+    </div>
 </EditForm>
 
 @code {
-    private Config config = new Config();
-
-    private void HandleValidSubmit()
+    private string textFieldValue = "";
+    private string? configName { get; set; }
+    
+    private List<CommandField> commandFields = new();
+    private Config config = new();
+    
+    private void AddFormField()
     {
-        DownloadFile();
+        commandFields.Add(new CommandField { Id = Guid.NewGuid().ToString(), Value = string.Empty });
+    }
+    
+    private class CommandField
+    {
+        public string? Id { get; set; }
+        public string? Value { get; set; }
     }
 
+    private List<string> GetCommands()
+    {
+        return WebScraper.CommandServices.GetCommandsNames();
+    }
+
+    private PropertyInfo[] GetProperties(string? name)
+    {
+        return WebScraper.CommandServices.GetProperties(name);
+    }
+    
+    private void HandleValidSubmit()
+    {
+        config.commands = new List<CommandConfig>();
+        foreach (var command in commandFields)
+        {
+            config.commands.Add(new CommandConfig() { name = command.Value });
+        }
+        DownloadFile();
+    }
+    
     private async void DownloadFile()
     {
-        await JsRuntime.InvokeAsync<object>("saveFile", "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        await JsRuntime.InvokeAsync<object>("saveFile", configName == null ? $"{configName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
     }
 }

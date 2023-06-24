@@ -528,7 +528,6 @@
   "required": [
     "url",
     "loop",
-    "driver",
     "waitTime"
   ]
 }
