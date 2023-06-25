@@ -3,7 +3,6 @@
 @using Newtonsoft.Json
 @using WebApp.Models
 @using System.ComponentModel.DataAnnotations
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
 
 @inject IJSRuntime JsRuntime
 
@@ -111,26 +110,21 @@
     {
         <div class="form-group">
             <label for="@field.Id">Command</label>
-            <select id="@field.Id" class="form-control" @bind="@field.Value">
+            <select id="@field.Id" class="form-control" @bind="@field.Name">
                 <option value="">Select...</option>
                 @foreach (var cmd in GetCommands())
                 {
                     <option value="@cmd">@cmd</option>
                 }
             </select>
-  
+            @{
+                FillProperties(field);
+            }
             <div class="form-group-property">
-                @foreach (var property in GetProperties(field.Value))
+                @foreach (var property in field.PropertyFields!)
                 {
-                    <label for="@textFieldValue">@property.Name</label>
-                    @if (property.PropertyType == typeof(int))
-                    {
-                        <input type="number" id="@textFieldValue" class="form-control" @bind="@textFieldValue"/>
-                    }
-                    else
-                    {
-                        <input type="text" id="@textFieldValue" class="form-control" @bind="@textFieldValue"/>
-                    }
+                    <label for="@property.Id">@property.Key</label>
+                    <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
                 }
             </div>
         </div>
@@ -143,21 +137,39 @@
 </EditForm>
 
 @code {
-    private string textFieldValue = "";
     private string? configName { get; set; }
     
     private List<CommandField> commandFields = new();
     private Config config = new();
-    
+
     private void AddFormField()
     {
-        commandFields.Add(new CommandField { Id = Guid.NewGuid().ToString(), Value = string.Empty });
+        commandFields.Add(new CommandField { Id = Guid.NewGuid().ToString(), Name = string.Empty, PropertyFields = new List<PropertyField>() });
     }
     
     private class CommandField
     {
         public string? Id { get; set; }
+        public string? Name { get; set; }
+        public List<PropertyField>? PropertyFields { get; set; }
+    }
+
+    private class PropertyField
+    {
+        public string? Id { get; set; }
+        public string? Key { get; set; }
         public string? Value { get; set; }
+    }
+
+    private void FillProperties(CommandField command)
+    {
+        if (command.PropertyFields!.Count == 0)
+        {
+            foreach (var property in GetProperties(command.Name))
+            {
+                command.PropertyFields.Add( new PropertyField { Id = Guid.NewGuid().ToString(), Key = property.Name, Value = string.Empty });
+            }
+        }
     }
 
     private List<string> GetCommands()
@@ -175,13 +187,17 @@
         config.commands = new List<CommandConfig>();
         foreach (var command in commandFields)
         {
-            config.commands.Add(new CommandConfig() { name = command.Value });
+            config.commands.Add(new CommandConfig() { name = command.Name, args = new Dictionary<string, object>()});
+            foreach (var property in command.PropertyFields!)
+            {
+                config.commands.Last().args!.Add(property.Key!.ToLower(), property.Value!);
+            }
         }
         DownloadFile();
     }
-    
+
     private async void DownloadFile()
     {
-        await JsRuntime.InvokeAsync<object>("saveFile", configName == null ? $"{configName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        await JsRuntime.InvokeAsync<object>("saveFile", configName != null ? $"{configName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
     }
 }
