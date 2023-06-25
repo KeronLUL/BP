@@ -1,8 +1,11 @@
 ﻿@page "/"
 @using System.Reflection
+@using System.Text.RegularExpressions
+@using System.Xml.XPath
+@using Microsoft.AspNetCore.Components
 @using Newtonsoft.Json
 @using WebApp.Models
-@using System.ComponentModel.DataAnnotations
+@using WebScraper.Json.Entities
 
 @inject IJSRuntime JsRuntime
 
@@ -72,7 +75,7 @@
     }
 </style>
 
-<EditForm Model="@config" OnValidSubmit="@HandleValidSubmit">
+<EditForm EditContext="@editContext">
     <DataAnnotationsValidator />
     <ValidationSummary />
     
@@ -83,22 +86,22 @@
     
     <div class="form-group">
         <label for="url">URL</label>
-        <input type="text" id="url" class="form-control" @bind="@config.url"/>
+        <input type="text" id="url" class="form-control" @bind="@config.Url"/>
     </div>
     
     <div class="form-group">
         <label for="loop">Loop</label>
-        <input type="checkbox" id="loop" class="form-check-input" @bind="@config.loop"/>
+        <input type="checkbox" id="loop" class="form-check-input" @bind="@config.Loop"/>
     </div>
     
     <div class="form-group">
         <label for="waitTime">Wait Time</label>
-        <input type="number" id="waitTime" class="form-control" @bind="@config.waitTime"/>
+        <input type="number" id="waitTime" class="form-control" @bind="@config.WaitTime"/>
     </div>
     
     <div class="form-group">
     <label for="driver">Driver</label>
-    <select class="form-control" id="driver" @bind="@config.driver">
+    <select class="form-control" id="driver" @bind="@config.Driver">
         <option value="">Select an option...</option>
         <option value="Firefox">Firefox</option>
         <option value="Chrome">Chrome</option>
@@ -125,6 +128,7 @@
                 {
                     <label for="@property.Id">@property.Key</label>
                     <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    <ValidationMessage For="() => property.Id" />
                 }
             </div>
         </div>
@@ -132,36 +136,29 @@
 
     <div class="btn-container">
         <button type="button" class="btn btn-primary mt-3" @onclick="AddFormField">Add command</button>
-        <button type="submit" class="btn btn-primary mt-3">Save config</button>
+        <button type="button" class="btn btn-primary mt-3" @onclick="HandleValidSubmit">Save config</button>
     </div>
 </EditForm>
 
 @code {
     private string? configName { get; set; }
-    
     private List<CommandField> commandFields = new();
     private Config config = new();
+    private EditContext? editContext;
+    private ValidationMessageStore? validationMessageStore;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(this);
+        validationMessageStore = new ValidationMessageStore(editContext);
+    }
 
     private void AddFormField()
     {
         commandFields.Add(new CommandField { Id = Guid.NewGuid().ToString(), Name = string.Empty, PropertyFields = new List<PropertyField>() });
     }
-    
-    private class CommandField
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-        public List<PropertyField>? PropertyFields { get; set; }
-    }
 
-    private class PropertyField
-    {
-        public string? Id { get; set; }
-        public string? Key { get; set; }
-        public string? Value { get; set; }
-    }
-
-    private void FillProperties(CommandField command)
+    private static void FillProperties(CommandField command)
     {
         if (command.PropertyFields!.Count == 0)
         {
@@ -172,25 +169,90 @@
         }
     }
 
-    private List<string> GetCommands()
+    private static List<string> GetCommands()
     {
         return WebScraper.CommandServices.GetCommandsNames();
     }
 
-    private PropertyInfo[] GetProperties(string? name)
+    private static IEnumerable<PropertyInfo> GetProperties(string? name)
     {
         return WebScraper.CommandServices.GetProperties(name);
     }
-    
+
+    private bool Validate(CommandField command, PropertyField property)
+    {
+        if (string.IsNullOrWhiteSpace(property.Value))
+        {
+            validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} cannot be empty");
+            editContext.NotifyValidationStateChanged();
+            return false;
+        }
+        if (property.Key == "Time")
+        {
+            if (!int.TryParse(property.Value, out _))
+            {
+                validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} must be a number");
+                editContext.NotifyValidationStateChanged();
+                return false;
+            }
+        }else if(property.Key is "Path" or "Attribute") // fix
+        {
+            if (!Regex.IsMatch(property.Value, @"^(/?[\w-]+(:?/[\w-]+)*)*(\[@?\w+(\s*=\s*('.*?'|"".+?""|\w+))?\])*$"))
+            {
+                validationMessageStore!.Add(editContext!.Field(config.Url!), $@"{config.Url} is not valid URL");
+                editContext.NotifyValidationStateChanged();
+                return false;
+            }
+            
+        }
+        return true;
+    }
+
+    private bool ValidateUrl(string? url)
+    {
+        if(string.IsNullOrWhiteSpace(config.Url))
+        {
+            config.Url = string.Empty;
+            validationMessageStore!.Add(editContext!.Field(config.Url!), $@"URL field cannot be empty");
+            editContext.NotifyValidationStateChanged();
+            return false;
+        }
+        if (!Regex.IsMatch(url!, @"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"))
+        {
+            validationMessageStore!.Add(editContext!.Field(config.Url!), $@"{config.Url} is not valid URL");
+            editContext.NotifyValidationStateChanged();
+            return false;
+        }
+        return true;
+    }
+
     private void HandleValidSubmit()
     {
-        config.commands = new List<CommandConfig>();
+        validationMessageStore!.Clear();
+        editContext!.NotifyValidationStateChanged();
+
+        if (!ValidateUrl(config.Url!)) return;
+        
+        config.Commands = new List<CommandConfig>();
         foreach (var command in commandFields)
         {
-            config.commands.Add(new CommandConfig() { name = command.Name, args = new Dictionary<string, object>()});
+            config.Commands.Add(new CommandConfig() { Name = command.Name, Args = new Dictionary<string, object>()});
             foreach (var property in command.PropertyFields!)
             {
-                config.commands.Last().args!.Add(property.Key!.ToLower(), property.Value!);
+                if (!Validate(command, property))
+                {
+                    config.Commands.Clear();
+                    return;
+                }
+                if (property.Key == "Time")
+                {
+                    int.TryParse(property.Value, out var value);
+                    config.Commands.Last().Args!.Add(property.Key!, value);
+                }
+                else
+                {
+                    config.Commands.Last().Args!.Add(property.Key!, property.Value!);
+                }
             }
         }
         DownloadFile();
