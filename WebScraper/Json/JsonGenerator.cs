@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using WebScraper.Json.Entities;
 
 namespace WebScraper.Json;
 
@@ -74,21 +75,24 @@ public static class JsonGenerator
         IDictionary<string, object> waitTime = new Dictionary<string, object>();
         IDictionary<string, object> commands = new Dictionary<string, object>();
         IDictionary<string, object> items = new Dictionary<string, object>();
-
-        var drivers = new List<string> //enum
-        {
-            "Chrome",
-            "Firefox",
-            "Safari"
-        };
         
         var anyOf = new List<object>();
 
         url.Add("type", "string");
         url.Add("format", "uri");
         loop.Add("type", "boolean");
-        driver.Add("type", "string");
-        driver.Add("enum", drivers);
+        driver.Add("anyOf", new List<IDictionary<string, object>>
+        {
+            new Dictionary<string, object>
+            {
+                { "type", "null"}
+            },
+            new Dictionary<string, object>
+            {
+                { "type", "string"},
+                { "enum", Enum.GetNames(typeof(Drivers)).ToList()}
+            }
+        });
         waitTime.Add("type", "integer");
         waitTime.Add("minimum", 0);
         
