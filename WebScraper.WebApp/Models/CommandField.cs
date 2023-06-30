@@ -1,4 +1,4 @@
-﻿namespace WebApp.Models;
+﻿namespace WebScraper.WebApp.Models;
 
 public class CommandField
 {

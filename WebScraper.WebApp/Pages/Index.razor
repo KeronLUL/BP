@@ -1,10 +1,9 @@
 ﻿@page "/"
 @using System.Reflection
 @using System.Text.RegularExpressions
-@using System.Xml.XPath
 @using Microsoft.AspNetCore.Components
 @using Newtonsoft.Json
-@using WebApp.Models
+@using WebScraper.WebApp.Models
 @using WebScraper.Json.Entities
 
 @inject IJSRuntime JsRuntime
@@ -80,8 +79,8 @@
     <ValidationSummary />
     
     <div class="form-group">
-        <label for="configName">Configuration file name</label>
-        <input type="text" id="configName" class="form-control" @bind="@configName"/>
+        <label for="configName">Configuration file name (Optional)</label>
+        <input type="text" id="configName" class="form-control" @bind="@ConfigName"/>
     </div>
     
     <div class="form-group">
@@ -113,7 +112,7 @@
     {
         <div class="form-group">
             <label for="@field.Id">Command</label>
-            <select id="@field.Id" class="form-control" @bind="@field.Name">
+            <select id="@field.Id" class="form-control" @onchange="@(e => SelectionChanged(e, field))">
                 <option value="">Select...</option>
                 @foreach (var cmd in GetCommands())
                 {
@@ -128,7 +127,6 @@
                 {
                     <label for="@property.Id">@property.Key</label>
                     <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
-                    <ValidationMessage For="() => property.Id" />
                 }
             </div>
         </div>
@@ -141,7 +139,7 @@
 </EditForm>
 
 @code {
-    private string? configName { get; set; }
+    private string? ConfigName { get; set; }
     private List<CommandField> commandFields = new();
     private Config config = new();
     private EditContext? editContext;
@@ -169,14 +167,20 @@
         }
     }
 
+    private static void SelectionChanged(ChangeEventArgs e, CommandField command)
+    {
+        command.Name = e.Value!.ToString();
+        command.PropertyFields!.Clear();
+    }
+
     private static List<string> GetCommands()
     {
-        return WebScraper.CommandServices.GetCommandsNames();
+        return CommandServices.GetCommandsNames();
     }
 
     private static IEnumerable<PropertyInfo> GetProperties(string? name)
     {
-        return WebScraper.CommandServices.GetProperties(name);
+        return CommandServices.GetProperties(name);
     }
 
     private bool Validate(CommandField command, PropertyField property)
@@ -189,17 +193,25 @@
         }
         if (property.Key == "Time")
         {
-            if (!int.TryParse(property.Value, out _))
+            if (!int.TryParse(property.Value, out var value))
             {
                 validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} must be a number");
                 editContext.NotifyValidationStateChanged();
                 return false;
             }
+
+            if (value < 0)
+            {
+                validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} must be a positive number");
+                editContext.NotifyValidationStateChanged();
+                return false;
+            }
+            
         }else if(property.Key is "Path" or "Attribute") // fix
         {
-            if (!Regex.IsMatch(property.Value, @"^(/?[\w-]+(:?/[\w-]+)*)*(\[@?\w+(\s*=\s*('.*?'|"".+?""|\w+))?\])*$"))
+            if (!Regex.IsMatch(property.Value, @"^(/?/?[\w-]+(:?/[\w-]+)*)*(\[@?\w+(\s*=\s*('.*?'|"".+?""|\w+))?\])*$"))
             {
-                validationMessageStore!.Add(editContext!.Field(config.Url!), $@"{config.Url} is not valid URL");
+                validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} is not valid XPath");
                 editContext.NotifyValidationStateChanged();
                 return false;
             }
@@ -217,7 +229,7 @@
             editContext.NotifyValidationStateChanged();
             return false;
         }
-        if (!Regex.IsMatch(url!, @"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"))
+        if (!Regex.IsMatch(url!, @"^(https?://)?(www\.)?((localhost)|([a-zA-Z0-9]+[.-])+[a-zA-Z]{2,6})(:\d{1,5})?(/.*)?$"))
         {
             validationMessageStore!.Add(editContext!.Field(config.Url!), $@"{config.Url} is not valid URL");
             editContext.NotifyValidationStateChanged();
@@ -232,7 +244,7 @@
         editContext!.NotifyValidationStateChanged();
 
         if (!ValidateUrl(config.Url!)) return;
-        
+
         config.Commands = new List<CommandConfig>();
         foreach (var command in commandFields)
         {
@@ -260,6 +272,6 @@
 
     private async void DownloadFile()
     {
-        await JsRuntime.InvokeAsync<object>("saveFile", configName != null ? $"{configName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        await JsRuntime.InvokeAsync<object>("saveFile", ConfigName != null ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
     }
 }
