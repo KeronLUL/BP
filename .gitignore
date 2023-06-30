@@ -8,3 +8,5 @@
 /WebScraper/Generated
 .idea
 /obj
+/WebScraper.WebApp/obj
+/WebScraper.WebApp/bin/

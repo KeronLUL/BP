@@ -3,6 +3,7 @@
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Components
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @using WebScraper.WebApp.Models
 @using WebScraper.Json.Entities
 
@@ -95,7 +96,7 @@
     
     <div class="form-group">
         <label for="waitTime">Wait Time</label>
-        <input type="number" id="waitTime" class="form-control" @bind="@config.WaitTime"/>
+        <input type="number" min="0" id="waitTime" class="form-control" @bind="@config.WaitTime"/>
     </div>
     
     <div class="form-group">
@@ -125,8 +126,16 @@
             <div class="form-group-property">
                 @foreach (var property in field.PropertyFields!)
                 {
-                    <label for="@property.Id">@property.Key</label>
-                    <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    if (property.Key == "Time")
+                    {
+                        <label for="@property.Id">@property.Key</label>
+                        <input type="number" min="0" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    }
+                    else
+                    {
+                        <label for="@property.Id">@property.Key</label>
+                        <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    }
                 }
             </div>
         </div>
@@ -169,7 +178,7 @@
 
     private static void SelectionChanged(ChangeEventArgs e, CommandField command)
     {
-        command.Name = e.Value!.ToString();
+        command.Name = e.Value!.ToString()!;
         command.PropertyFields!.Clear();
     }
 
@@ -187,7 +196,14 @@
     {
         if (string.IsNullOrWhiteSpace(property.Value))
         {
-            validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} cannot be empty");
+            if (property.Key == "Time")
+            {
+                validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} must be valid number");
+            }
+            else
+            {
+                validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} cannot be empty");
+            }
             editContext.NotifyValidationStateChanged();
             return false;
         }
@@ -207,7 +223,7 @@
                 return false;
             }
             
-        }else if(property.Key is "Path" or "Attribute") // fix
+        }else if(property.Key is "Path" or "Attribute")
         {
             if (!Regex.IsMatch(property.Value, @"^(/?/?[\w-]+(:?/[\w-]+)*)*(\[@?\w+(\s*=\s*('.*?'|"".+?""|\w+))?\])*$"))
             {
@@ -272,6 +288,12 @@
 
     private async void DownloadFile()
     {
-        await JsRuntime.InvokeAsync<object>("saveFile", ConfigName != null ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        var serializerSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Formatting = Formatting.Indented
+        };
+        
+        await JsRuntime.InvokeAsync<object>("saveFile", ConfigName != null ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, serializerSettings));
     }
 }
