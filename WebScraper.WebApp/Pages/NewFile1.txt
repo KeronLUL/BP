@@ -1,0 +1,31 @@
+﻿ @foreach (var field in commandFields)
+    {
+        <div class="form-group">
+            <label for="@field.Id">Command</label>
+            <select id="@field.Id" class="form-control" @onchange="@(e => SelectionChanged(e, field))">
+                <option value="">Select...</option>
+                @foreach (var cmd in GetCommands())
+                {
+                    <option value="@cmd">@cmd</option>
+                }
+            </select>
+            @{
+                FillProperties(field);
+            }
+            <div class="form-group-property">
+                @foreach (var property in field.PropertyFields!)
+                {
+                    if (property.Key == "Time")
+                    {
+                        <label for="@property.Id">@property.Key</label>
+                        <input type="number" min="0" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    }
+                    else
+                    {
+                        <label for="@property.Id">@property.Key</label>
+                        <input type="text" id="@property.Id" class="form-control" @bind="@property.Value"/>
+                    }
+                }
+            </div>
+        </div>
+    }

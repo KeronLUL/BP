@@ -8,9 +8,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\WebScraper\WebScraper.csproj" />
+        <ProjectReference Include="..\WebScraper.Database\WebScraper.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="MudBlazor" Version="6.6.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 </Project>

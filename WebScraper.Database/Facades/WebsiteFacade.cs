@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -38,5 +39,22 @@ public class WebsiteFacade :
             return entity;
         }
         return entity;
+    }
+
+    public async Task<WebsiteEntity?> GetWebsiteAsync(Guid id)
+    {
+        await using IUnitOfWork uow = UnitOfWorkFactory.Create();
+        IQueryable<WebsiteEntity> query = uow.GetRepository<WebsiteEntity, WebsiteEntityMapper>().Get();
+        WebsiteEntity? entity = await query.SingleOrDefaultAsync(e => e.Id == id);
+        
+        return entity;
+    }
+
+    public async Task<List<WebsiteEntity>> GetAll()
+    {
+        await using IUnitOfWork uow = UnitOfWorkFactory.Create();
+        IQueryable<WebsiteEntity> query = uow.GetRepository<WebsiteEntity, WebsiteEntityMapper>().Get();
+        List<WebsiteEntity> list = query.ToList();
+        return list;
     }
 }

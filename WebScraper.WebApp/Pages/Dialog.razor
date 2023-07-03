@@ -1,0 +1,39 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (Element)
+        {
+            <MudText>Are you sure you want to delete element <b>@ContentText</b></MudText>
+        }
+        else
+        {
+            <MudText>Are you sure you want to delete website <b>@ContentText</b>? This will delete all elements bound to this website</MudText>
+        }
+        
+    </DialogContent>
+    <DialogActions>
+        <MudCheckBox @bind-Checked="@All">For all</MudCheckBox>
+        <MudButton OnClick="Cancel" Class="ml-5">Cancel</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public string? ContentText { get; set; }
+    [Parameter] public bool All { get; set; }
+    [Parameter] public bool Element { get; set; }
+
+    void Submit() => MudDialog!.Close(All ? DialogResult.Ok("true") : DialogResult.Ok("false"));
+
+    void Cancel()
+    {
+        if (!All)
+        {
+            MudDialog!.Close(DialogResult.Ok("continue"));
+        }
+        else
+        {
+            MudDialog!.Cancel();
+        }
+    }
+}

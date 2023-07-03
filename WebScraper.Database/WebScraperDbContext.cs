@@ -10,7 +10,7 @@ public class WebScraperDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(@"Data Source=Data/webscraper.db");
+        optionsBuilder.UseSqlite(@"Data Source=../WebScraper/Data/webscraper.db");
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

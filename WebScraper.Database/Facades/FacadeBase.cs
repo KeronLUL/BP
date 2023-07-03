@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WebScraper.Database.Entities;
 using WebScraper.Database.Facades.Interfaces;
 using WebScraper.Database.Mappers;
@@ -18,6 +20,20 @@ public abstract class
         IUnitOfWorkFactory unitOfWorkFactory)
     {
         UnitOfWorkFactory = unitOfWorkFactory;
+    }
+    
+    public async Task DeleteAsync(Guid id)
+    {
+        await using IUnitOfWork uow = UnitOfWorkFactory.Create();
+        try
+        {
+            uow.GetRepository<TEntity, TEntityMapper>().Delete(id);
+            await uow.CommitAsync().ConfigureAwait(false);
+        }
+        catch (DbUpdateException e)
+        {
+            throw new InvalidOperationException("Entity deletion failed.", e);
+        }
     }
 
     public virtual async Task<TEntity> SaveAsync(TEntity entity)

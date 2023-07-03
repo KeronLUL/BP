@@ -12,4 +12,5 @@ public interface IRepository<TEntity>
     ValueTask<bool> ExistsAsync(TEntity entity);
     Task<TEntity> InsertAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity);
+    void Delete(Guid entityId);
 }

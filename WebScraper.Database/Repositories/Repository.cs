@@ -35,4 +35,6 @@ public class Repository<TEntity> : IRepository<TEntity>
         _entityMapper.MapToExistingEntity(existingEntity, entity);
         return existingEntity;
     }
+    
+    public void Delete(Guid entityId) => _dbSet.Remove(_dbSet.Single(i => i.Id == entityId));
 }

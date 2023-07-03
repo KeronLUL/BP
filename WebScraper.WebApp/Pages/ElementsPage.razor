@@ -1,0 +1,136 @@
+﻿@page "/elements"
+@using WebScraper.Database.Entities
+@using WebScraper.Database.Facades.Interfaces
+@using System.Data.Common
+@inject IElementFacade ElementFacade
+@inject IWebsiteFacade WebsiteFacade
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<style>
+    .custom-table {
+        background-color: #f0f0f0;
+    }
+
+    .selected {
+        background-color: #c61351   !important;
+    }
+    
+    .selected > td {
+        color: white !important;
+    }
+
+    .selected > td .mud-input {
+        color: white!important;
+    }
+</style>
+
+@if (showAlert)
+{
+    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete element from database.</MudAlert>
+}
+
+<MudTable Items="@Elements" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Class="custom-table" @ref="mudTableElement" Filter="new Func<ElementEntity,bool>(ElementFilterFunc)" @bind-SelectedItems="selectedElements" T="ElementEntity">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchElement" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" AdornmentColor="Color.Secondary"></MudTextField>
+        <MudButton Class="mt-5 ml-5 mr-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteElement" Color="Color.Error">DELETE</MudButton>
+    </ToolBarContent>
+    
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Id)">ID</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Name!)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Value!)">Value</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Timestamp!)">Timestamp</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Website!.URL!)">Website URL</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Value">@context.Value</MudTd>
+        <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
+        <MudTd DataLabel="WebsiteUrl">@context.Website!.URL</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"{infoFormat}")" HorizontalAlignment="HorizontalAlignment.Center"/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private List<ElementEntity> Elements = new();
+    private MudTable<ElementEntity> mudTableElement = new();
+    private string infoFormat = "Items {first_item}-{last_item} of {all_items}";
+    private bool showAlert;
+    private bool skipDialog;
+    
+    private string searchElement = "";
+    private HashSet<ElementEntity> selectedElements = new HashSet<ElementEntity>();
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await ElementFacade.GetAsync();
+        foreach (var element in Elements)
+        {
+            element.Website = await WebsiteFacade.GetWebsiteAsync(element.WebsiteId);
+        }
+    }
+
+    private bool ElementFilterFunc(ElementEntity element) => ElementFilterFuncInternal(element, searchElement);
+
+    private bool ElementFilterFuncInternal(ElementEntity element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Value!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Timestamp!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.WebsiteId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task DeleteElement()
+    {
+        foreach (var element in selectedElements)
+        {
+            if (!skipDialog)
+            {
+                var parameters = new DialogParameters<Dialog>
+                {
+                    { x => x.ContentText, $"{element.Name}" },
+                    { x => x.Element, true }
+                };
+                var dialog = await DialogService.ShowAsync<Dialog>("Delete Element", parameters);
+                var result = await dialog.Result;
+                
+                if (result.Canceled)
+                {
+                    skipDialog = false;
+                    break;
+                }
+                if ((string)result.Data == "true") skipDialog = true;
+                if ((string)result.Data == "continue") continue;
+            }
+            try
+            {
+                await ElementFacade.DeleteAsync(element.Id);
+            }
+            catch (DbException)
+            {
+                showAlert = true;
+            }
+        }
+        skipDialog = false;
+        NavigationManager.NavigateTo("/elements", true);
+    }
+    
+    private void CloseMe()
+    {
+        showAlert = false;
+    }
+}

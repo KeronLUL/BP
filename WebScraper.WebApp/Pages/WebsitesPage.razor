@@ -1,0 +1,117 @@
+﻿@page "/websites"
+@using WebScraper.Database.Entities
+@using WebScraper.Database.Facades.Interfaces
+@using System.Data.Common
+@inject IWebsiteFacade WebsiteFacade
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<style>
+    .custom-table {
+            background-color: #f0f0f0;
+    }
+
+    .selected {
+        background-color: #c61351   !important;
+    }
+    
+    .selected > td {
+        color: white !important;
+    }
+
+    .selected > td .mud-input {
+        color: white!important;
+    }
+</style>
+
+@if (showAlert)
+{
+    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete website from database.</MudAlert>
+}
+
+<MudTable Items="@websites" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Class="custom-table" @ref="mudTableWebsite" Filter="new Func<WebsiteEntity,bool>(WebsiteFilterFunc)" @bind-SelectedItems="selectedWebsites" T="WebsiteEntity">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Websites</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchWebsite" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" AdornmentColor="Color.Secondary"></MudTextField>
+        <MudButton Class="mt-5 ml-5 mr-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeleteWebsite">DELETE</MudButton>
+    </ToolBarContent>
+        
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<WebsiteEntity, object>(x=>x.Id)">ID</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<WebsiteEntity, object>(x=>x.URL!)">URL</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Url">@context.URL</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"{infoFormat}")" HorizontalAlignment="HorizontalAlignment.Center"/>
+    </PagerContent>
+</MudTable>
+
+@code{
+    private List<WebsiteEntity> websites = new();
+    
+    private MudTable<WebsiteEntity> mudTableWebsite = new();
+    private string infoFormat = "Items {first_item}-{last_item} of {all_items}";
+    private bool showAlert;
+    private bool skipDialog;
+    
+    private string searchWebsite = "";
+    private HashSet<WebsiteEntity> selectedWebsites = new HashSet<WebsiteEntity>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        websites = await WebsiteFacade.GetAll();
+    }
+
+    private bool WebsiteFilterFunc(WebsiteEntity website) => WebsiteFilterFuncInternal(website, searchWebsite);
+
+    private bool WebsiteFilterFuncInternal(WebsiteEntity element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.URL!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task DeleteWebsite()
+    {
+        foreach (var website in selectedWebsites)
+        {
+            if (!skipDialog)
+            {
+                var parameters = new DialogParameters<Dialog> { { x => x.ContentText, $"{website.URL}" } };
+                var dialog = await DialogService.ShowAsync<Dialog>("Delete Element", parameters);
+                var result = await dialog.Result;
+                
+                if (result.Canceled)
+                {
+                    skipDialog = false;
+                    break;
+                }
+                if ((string)result.Data == "true") skipDialog = true;
+                if ((string)result.Data == "continue") continue;
+            }
+            try
+            {
+                await WebsiteFacade.DeleteAsync(website.Id);
+            }
+            catch (DbException)
+            {
+                showAlert = true;
+            }
+        }
+        skipDialog = false;
+        NavigationManager.NavigateTo("/websites", true);
+    }
+    
+    private void CloseMe()
+    {
+        showAlert = false;
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +19,11 @@ public class ElementFacade :
     {
     }
     
-    public async Task<ElementEntity?> GetAsync(string? name, Guid websiteId)
+    public async Task<List<ElementEntity>> GetAsync()
     {
         await using IUnitOfWork uow = UnitOfWorkFactory.Create();
         IQueryable<ElementEntity> query = uow.GetRepository<ElementEntity, ElementEntityMapper>().Get();
-        ElementEntity? entity = await query.SingleOrDefaultAsync(e => e.Name == name && e.WebsiteId == websiteId);
-        
-        return entity;
+        List<ElementEntity> list = query.ToList();
+        return list;
     }
 }

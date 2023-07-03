@@ -13,10 +13,12 @@
     <link href="css/site.css" rel="stylesheet"/>
     <link href="WebScraper.WebApp.styles.css" rel="stylesheet"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered"/>
 </head>
 <body>
-<component type="typeof(App)" render-mode="ServerPrerendered"/>
+<component type="typeof(App)" render-mode="Server"/>
 
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
@@ -31,5 +33,6 @@
 
 <script src="_framework/blazor.server.js"></script>
 <script src="saveFile.js"></script>
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
 </body>
 </html>
