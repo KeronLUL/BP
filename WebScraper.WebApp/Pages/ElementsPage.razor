@@ -39,14 +39,12 @@
     </ToolBarContent>
     
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Id)">ID</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Name!)">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Value!)">Value</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Timestamp!)">Timestamp</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ElementEntity, object>(x=>x.Website!.URL!)">Website URL</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Value">@context.Value</MudTd>
         <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
@@ -89,7 +87,7 @@
             return true;
         if (element.Timestamp!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.WebsiteId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Website!.URL!.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }

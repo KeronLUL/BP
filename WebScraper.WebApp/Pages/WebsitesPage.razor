@@ -38,11 +38,9 @@
     </ToolBarContent>
         
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<WebsiteEntity, object>(x=>x.Id)">ID</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<WebsiteEntity, object>(x=>x.URL!)">URL</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
         <MudTd DataLabel="Url">@context.URL</MudTd>
     </RowTemplate>
     <PagerContent>
