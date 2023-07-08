@@ -4,6 +4,8 @@
 @using Microsoft.AspNetCore.Components
 @using MudBlazor.Utilities
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using Newtonsoft.Json.Schema
 @using Newtonsoft.Json.Serialization
 @using WebScraper.WebApp.Models
 @using WebScraper.Json.Entities
@@ -58,7 +60,32 @@
     .custom-label-container .mud-input-label {
         background-color: #f0f0f0;
     }
+    
+    .command-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+    
+    .drop {
+        background-color: #4f5050;
+    }
+    
+    .mud-command{
+        background-color: #f0f0f0;
+    }
+    
+    .property .mud-input-label {
+        background-color: #f0f0f0;
+        margin-bottom: 5px;
+    }
 </style>
+
+@if (showAlert)
+{
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">@alertMessage</MudAlert>
+}
 
 <EditForm EditContext="@editContext">
     <DataAnnotationsValidator />
@@ -95,28 +122,34 @@
         {
             <MudDropContainer T="CommandField" Items="@commandFields" @ref="_container" ItemsSelector="@((item, dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="rounded d-flex flex-wrap flex-grow-1">
                 <ChildContent>
-                    <MudPaper Class="ma-4 flex-grow-1">
-                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
-                            <MudDropZone T="CommandField" Identifier="1" Class="flex-grow-1 rounded" AllowReorder="true"/>
-                        </MudList>
-                    </MudPaper>
+                <MudPaper Class="ma-4 flex-grow-1 rounded-lg">
+                    <MudList Clickable="true" Class="d-flex flex-column mud-height-full drop rounded-lg">
+                        <MudDropZone T="CommandField" Identifier="1" Class="flex-grow-1 rounded-lg" AllowReorder="true"/>
+                    </MudList>
+                </MudPaper>
                 </ChildContent>
                 <ItemRenderer Context="command">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="cmd => DeleteCommand(command)"></MudIconButton>
-                    <MudSelect T="string" Placeholder="Select command..." Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Value="@command.Name" ValueChanged="value => SelectionChanged(value, command)">
-                        @foreach (var cmd in GetCommands())
-                        {
-                            <MudSelectItem Value="@cmd">@cmd</MudSelectItem>
-                        }
+                    <MudPaper Elevation="3" Class="ml-3 mr-3 mb-3 mt-3 mud-command">
+                        <div class="command-container">
+                            <MudSelect T="string" Placeholder="Select command..." Class="ml-3 mb-3 mt-3" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Value="@command.Name" ValueChanged="value => SelectionChanged(value, command)">
+                                @foreach (var cmd in GetCommands())
+                                {
+                                    <MudSelectItem Value="@cmd">@cmd</MudSelectItem>
+                                }
 
-                    </MudSelect>
-                    @{
-                        FillProperties(command);
-                    }
-                    @foreach (var property in command.PropertyFields!)
-                    {
-                        <MudTextField class="ml-15 mt-2" Variant="Variant.Outlined" @bind-Value="@property.Value" Label="@property.Key"></MudTextField>
-                    }
+                            </MudSelect>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="cmd => DeleteCommand(command)"></MudIconButton>
+                        </div>
+                        @{
+                            FillProperties(command);
+                        }
+                        @foreach (var property in command.PropertyFields!)
+                        {
+                            <div class="property">
+                                <MudTextField Class="ml-15 mr-15 property" Variant="Variant.Outlined" @bind-Value="@property.Value" Label="@property.Key"></MudTextField>
+                            </div>
+                        }
+                    </MudPaper>
                 </ItemRenderer>
             </MudDropContainer>
         }
@@ -135,6 +168,8 @@
     private EditContext? editContext;
     private ValidationMessageStore? validationMessageStore;
     private int commandOrder = 1;
+    private bool showAlert;
+    private string? alertMessage;
 
     protected override void OnInitialized()
     {
@@ -142,19 +177,10 @@
         validationMessageStore = new ValidationMessageStore(editContext);
     }
 
-    private List<CommandField> _serverData = new();
-    
     private void ItemUpdated(MudItemDropInfo<CommandField> dropItem)
     {
         dropItem.Item!.Selector = dropItem.DropzoneIdentifier;
-
-        var indexOffset = dropItem.DropzoneIdentifier switch
-        {
-            "2"  => _serverData.Count(x => x.Selector == "1"),
-            _ => 0,
-            };
-
-        commandFields.UpdateOrder(dropItem, item => item.Order, indexOffset);
+        commandFields.UpdateOrder(dropItem, item => item.Order);
     }
     
     private void RefreshContainer()
@@ -276,7 +302,7 @@
         config.Commands = new List<CommandConfig>();
         foreach (var command in commandFields.OrderBy(o => o.Order))
         {
-            //empty command
+            if (command.Name == string.Empty) continue;
             config.Commands.Add(new CommandConfig() { Name = command.Name, Args = new Dictionary<string, object>()});
             foreach (var property in command.PropertyFields!)
             {
@@ -309,6 +335,34 @@
         
         await JsRuntime.InvokeAsync<object>("saveFile", ConfigName is not (null or "") ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, serializerSettings));
     }
+
+    private void TransferData(Config newConfig)
+    {
+        config.Url = newConfig.Url;
+        config.Driver = newConfig.Driver;
+        config.Loop = newConfig.Loop;
+        config.WaitTime = newConfig.WaitTime;
+        commandFields.Clear();
+
+        if (newConfig.Commands != null)
+        {
+            foreach (var command in newConfig.Commands)
+            {
+                commandFields.Add(new CommandField { Order = commandOrder, Name = command.Name, Selector = "1", PropertyFields = new List<PropertyField>()});
+                commandOrder++;
+                foreach (var property in command.Args!)
+                {
+                    commandFields.Last().PropertyFields!.Add(new PropertyField { Id = Guid.NewGuid().ToString(), Key = property.Key, Value = property.Value.ToString() });
+                }
+            }
+        }
+        RefreshContainer();
+    }
+    
+    private void CloseMe()
+    {
+        showAlert = false;
+    }
     
     private async Task LoadConfig(IBrowserFile file)
     {
@@ -318,11 +372,28 @@
 
             using var streamReader = new StreamReader(fileStream);
             var fileContent = await streamReader.ReadToEndAsync();
+            var schema = await File.ReadAllTextAsync("../WebScraper/config.schema.json");
+            
+            var jsonSchema = JSchema.Parse(schema);
+            var jsonConfig = JToken.Parse(fileContent);
+
+            if (!jsonConfig.IsValid(jsonSchema))
+            {
+                alertMessage = "Uploaded config is not valid";
+                showAlert = true;
+                return;
+            }
+            
             var uploadedConfig = JsonConvert.DeserializeObject<Config>(fileContent);
-            config.Url = uploadedConfig.Url;
+            if (uploadedConfig != null)
+            {
+                TransferData(uploadedConfig);
+            }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
+            alertMessage = "Failed to upload config file";
+            showAlert = true;
         }
     }
 }

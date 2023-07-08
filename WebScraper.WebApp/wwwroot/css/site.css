@@ -2,6 +2,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #4f5050;
+    color: white
 }
 
 h1:focus {
@@ -12,9 +14,13 @@ a, .btn-link {
     color: #0071c1;
 }
 
+.content-div {
+    margin-left: 250px;
+}
+
 .nav-bar {
-    height: 100vh;
-    background-color: #0b0c10;
+    background-color: #0b0c10; color: #C5C6C7; height: 100vh; position: fixed;
+    width: 250px;
 }
 
 .btn-primary {

@@ -26,7 +26,7 @@
 
 @if (showAlert)
 {
-    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete website from database.</MudAlert>
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete website from database.</MudAlert>
 }
 
 <MudTable Items="@websites" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Class="custom-table" @ref="mudTableWebsite" Filter="new Func<WebsiteEntity,bool>(WebsiteFilterFunc)" @bind-SelectedItems="selectedWebsites" T="WebsiteEntity">

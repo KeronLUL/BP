@@ -1,4 +1,5 @@
-﻿@page "/elements"
+﻿@page "/"
+@page "/elements"
 @using WebScraper.Database.Entities
 @using WebScraper.Database.Facades.Interfaces
 @using System.Data.Common
@@ -27,7 +28,7 @@
 
 @if (showAlert)
 {
-    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete element from database.</MudAlert>
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">Failed to delete element from database.</MudAlert>
 }
 
 <MudTable Items="@Elements" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Class="custom-table" @ref="mudTableElement" Filter="new Func<ElementEntity,bool>(ElementFilterFunc)" @bind-SelectedItems="selectedElements" T="ElementEntity">
