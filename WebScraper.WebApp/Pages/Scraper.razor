@@ -1,0 +1,168 @@
+﻿@page "/"
+@page "/scraper"
+@using Newtonsoft.Json.Linq
+@using Newtonsoft.Json
+
+<style>
+    .container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        text-align: center;
+        margin-left: 15px;
+    }    
+</style>
+
+@if (showAlert)
+{
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">@alertText</MudAlert>
+}
+<MudPaper>
+    <MudToolBar>
+        <MudText Class="mt-3" Typo="Typo.h3">WebScraper</MudText>
+        <MudSpacer />
+    </MudToolBar>
+    <MudText Class="ml-3 mt-3" Typo="Typo.h6">Configuration file:</MudText>
+    <MudSelect Class="ml-3 mb-3 mr-3" Placeholder="Select config file..." Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="@path">
+        @foreach (var file in configFiles)
+        {
+            <MudSelectItem Value="@file">@file</MudSelectItem>
+        }
+    </MudSelect>
+    
+    <div style="display: flex; margin-left: 5px">
+        <MudCheckBox @bind-Checked="@headless" Color="Color.Primary">Headless mode</MudCheckBox>
+        <MudCheckBox @bind-Checked="@maximized" Color="Color.Primary">Maximized (Chrome driver only)</MudCheckBox>
+    </div>
+
+    <div style="display: flex;">
+        <MudButton Variant="Variant.Filled" Class="ml-3 mb-3 mt-3" StartIcon="@Icons.Material.Filled.PlayArrow" Color="Color.Primary" OnClick="Run">Run</MudButton>
+        @* <MudButton Variant="Variant.Filled" Class="ml-3 mb-3 mt-3" StartIcon="@Icons.Material.Filled.Stop" Color="Color.Error" OnClick="Stop">Stop</MudButton> *@
+        @switch (status)
+        {
+            case TaskStatus.RanToCompletion:
+                if (Environment.ExitCode == 0)
+                {
+                    <MudText Class="container" Color="@Color.Success">WebScraper finished</MudText>
+                }
+                else
+                {
+                    <MudText Class="container" Color="@Color.Error">WebScraper finished with error</MudText>
+                }
+                break;
+            case TaskStatus.Canceled:
+                <MudText Class="container" Color="@Color.Success">WebScraper stopped</MudText>
+                break;
+            case TaskStatus.Running:
+                <MudText Class="container">WebScraper is running...</MudText>
+                break;    
+            default:
+            {
+                <MudText Class="container">WebScraper hasn't started</MudText>
+                break;
+            }
+        }
+
+    </div>
+</MudPaper>
+
+@code{
+    private List<string> configFiles = new ();
+    private List<string> argumentList = new ();
+    private string? path;
+    private string? alertText;
+    private bool isProcessRunning;
+    private bool showAlert;
+    private bool headless = true;
+    private bool maximized;
+    private TaskStatus status;
+    private Task? scraper;
+
+    protected override void OnInitialized()
+    {
+        foreach (var file in Directory.GetFiles("../WebScraper/Configs"))
+        {
+            configFiles.Add(Path.GetFileName(file));
+        }
+    }
+
+    private bool CheckConfig()
+    {
+        bool targetValue;
+        try
+        {
+            var config = File.ReadAllText("../WebScraper/Configs/" + path);
+            dynamic jsonObject = JsonConvert.DeserializeObject(config)!;
+            targetValue = jsonObject["loop"];
+        }
+        catch (Exception)
+        {
+            alertText = "Cannot determine looping of WebScraper";
+            return false;
+        }
+
+        if (!targetValue)
+        {
+            return true;
+        }
+        
+        alertText = "For running WebScraper in a loop, please run it from command line";
+        return false;
+    }
+
+    private async Task Run()
+    {
+        if (path == null)
+        {
+            alertText = "Configuration file must be specified!";
+            showAlert = true;
+            return;
+        }
+        if (!CheckConfig())
+        {
+            showAlert = true;
+            return;
+        }
+        
+        argumentList.Add("-f" );
+        argumentList.Add("../WebScraper/Configs/" + path);
+        if(headless) argumentList.Add("-h" );
+        if(maximized) argumentList.Add("-m" );
+        
+        var arguments = argumentList.ToArray();
+        
+        if (!isProcessRunning)
+        {
+            isProcessRunning = true;
+
+            scraper = Task.Run(async () =>
+            {
+                await Program.Main(arguments);
+            });
+
+            while (scraper.Status != TaskStatus.RanToCompletion && scraper.Status != TaskStatus.Faulted)
+            {
+                status = TaskStatus.Running;
+                await Task.Delay(1000);
+            }
+
+            status = scraper.Status;
+            isProcessRunning = false;
+
+        }
+        StateHasChanged();
+    }
+
+    private void Stop()
+    {
+        status = TaskStatus.Canceled;
+        isProcessRunning = false;
+        StateHasChanged();
+    }
+    
+    private void CloseMe()
+    {
+        showAlert = false;
+    }
+}

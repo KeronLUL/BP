@@ -1,5 +1,4 @@
-﻿@page "/"
-@page "/elements"
+﻿@page "/elements"
 @using WebScraper.Database.Entities
 @using WebScraper.Database.Facades.Interfaces
 @using System.Data.Common
@@ -64,7 +63,7 @@
     private bool skipDialog;
     
     private string searchElement = "";
-    private HashSet<ElementEntity> selectedElements = new HashSet<ElementEntity>();
+    private HashSet<ElementEntity> selectedElements = new ();
     
     
     protected override async Task OnInitializedAsync()

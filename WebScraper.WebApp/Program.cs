@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
-using WebScraper;
 using WebScraper.Database;
 using WebScraper.Database.Facades;
 using WebScraper.Database.Facades.Interfaces;

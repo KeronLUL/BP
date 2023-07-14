@@ -9,11 +9,18 @@
       "type": "boolean"
     },
     "driver": {
-      "type": "string",
-      "enum": [
-        "Chrome",
-        "Firefox",
-        "Safari"
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "Firefox",
+            "Chrome",
+            "Safari"
+          ]
+        }
       ]
     },
     "waitTime": {

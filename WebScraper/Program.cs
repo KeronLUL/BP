@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebScraper.Arguments;
 using WebScraper.Database;
 using WebScraper.Database.Facades;
 using WebScraper.Database.Facades.Interfaces;
@@ -10,10 +11,13 @@ using WebScraper.Database.UnitOfWork;
 
 namespace WebScraper
 {
-    internal sealed class Program
+    public sealed class Program
     {
-        private static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            Argument.ParseArguments(args);
+            if (args.Contains("--help")) return;
+
             await Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {

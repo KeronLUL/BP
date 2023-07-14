@@ -1,13 +1,27 @@
 ﻿{
   "url": "https://refactoring.guru/design-patterns/command",
   "loop": false,
-  "driver": "Firefox",
-  "waitTime": 10,
+  "driver": "Chrome",
+  "waitTime": 10000,
   "commands": [
     {
       "name" : "Click",
       "args" : {
         "path" : "//a[@href='/design-patterns']"
+      }
+    },
+    {
+      "name" : "WaitUntilExists",
+      "args" : {
+        "path" : "//h1",
+        "time" : 10
+      }
+    },
+    {
+      "name" : "SaveText",
+      "args" : {
+        "path" : "//h1",
+        "name" : "h1 header"
       }
     },
     {
@@ -21,7 +35,7 @@
       "name" : "SaveText",
       "args" : {
         "path" : "//h3",
-        "name" : "testing"
+        "name" : "h3 header"
       }
     }
   ]

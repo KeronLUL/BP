@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Safari;
+using WebScraper.Arguments;
 
 namespace WebScraper.SeleniumDriver
 {
@@ -15,12 +16,13 @@ namespace WebScraper.SeleniumDriver
             {
                 case "Chrome":
                     var optionsChrome = new ChromeOptions();
-                    optionsChrome.AddArguments("--headless=new", "--window-size=1920,1080");
+                    if (Argument.Headless()) optionsChrome.AddArguments("--headless=new");
+                    if (Argument.Maximized()) optionsChrome.AddArguments("start-maximized");
                     Driver = new ChromeDriver(optionsChrome);
                     break;
                 case "Firefox":
                     var optionsFirefox = new FirefoxOptions();
-                    optionsFirefox.AddArguments("--headless=new", "--window-size=1920,1080");
+                    if (Argument.Headless()) optionsFirefox.AddArguments("--headless");
                     Driver = new FirefoxDriver(optionsFirefox);
                     break;
                 case "Safari":
