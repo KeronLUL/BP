@@ -50,6 +50,30 @@
             "properties": {
               "name": {
                 "type": "string",
+                "pattern": "^AddCookie$"
+              },
+              "args": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
                 "pattern": "^Back$"
               },
               "args": {

@@ -10,3 +10,5 @@
 /obj
 /WebScraper.WebApp/obj
 /WebScraper.WebApp/bin/
+/WebScraper.Tests/obj
+/WebScraper.Tests/bin/

@@ -2,14 +2,14 @@
 
 namespace WebScraper.SeleniumCommands;
 
-public class SendKeysAlert : ICommand
+public class AddCookie : ICommand
 {
-    public string? Text { get; set; }
-        
+    public string? Key { get; set; }
+    public string? Value { get; set; }
+    
     public ValueTask<string?> Execute(IWebDriver? driver)
     {
-        var alert = driver!.SwitchTo().Alert();
-        alert.SendKeys(Text);
+        driver!.Manage().Cookies.AddCookie(new Cookie(Key, Value));
         return ValueTask.FromResult<string?>(null);
     }
 }
