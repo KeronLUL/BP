@@ -1,0 +1,52 @@
+{
+  "url": "https://www.selenium.dev/",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Maximize",
+      "args": {}
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//span[contains(text(),'Documentation')]"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "Forward",
+      "args": {}
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h1",
+        "name": "Header text"
+      }
+    },
+    {
+      "name": "SaveTitle",
+      "args": {
+        "name": "Title"
+      }
+    },
+    {
+      "name": "Navigate",
+      "args": {
+        "url": "https://www.selenium.dev/"
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h1",
+        "name": "Main page header"
+      }
+    }
+  ]
+}

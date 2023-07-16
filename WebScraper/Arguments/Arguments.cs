@@ -42,4 +42,14 @@ public static class Argument
     {
         return _maximized;
     }
+    
+    public static void SetHeadless(bool value)
+    {
+        _headless = value;
+    }
+    
+    public static void SetMaximized(bool value)
+    {
+        _maximized = value;
+    }
 }

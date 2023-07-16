@@ -1,0 +1,53 @@
+{
+  "url": "https://www.vut.cz/",
+  "loop": true,
+  "driver": "Chrome",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@id='f-search-trigger']"
+      }
+    },
+    {
+      "name": "SendKeys",
+      "args": {
+        "path": "//input[@id='f-search__search']",
+        "text": "IZP"
+      }
+    },
+    {
+      "name": "Submit",
+      "args": {
+        "path": "//input[@id='f-search__search']"
+      }
+    },
+    {
+      "name": "WaitUntilExists",
+      "args": {
+        "path": "//a[contains(text(),'Základy programování')]",
+        "time": 10000
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[contains(text(),'Základy programování')]"
+      }
+    },
+    {
+      "name": "SaveTitle",
+      "args": {
+        "name": "Title"
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h1[@class='b-detail__title']",
+        "name": "Subject name"
+      }
+    }
+  ]
+}

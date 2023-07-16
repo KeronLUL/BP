@@ -35,6 +35,8 @@ namespace WebScraper
                         new WebsiteFacade(provider.GetRequiredService<IUnitOfWorkFactory>()));
                 })
                 .RunConsoleAsync();
+            Argument.SetHeadless(false);
+            Argument.SetMaximized(false);
         }
     }
 }

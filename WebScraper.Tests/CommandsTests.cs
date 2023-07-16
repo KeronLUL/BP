@@ -102,7 +102,7 @@ public sealed class CommandsTests
     {
         var navigate = new Navigate()
         {
-            Path = "https://refactoring.guru/design-patterns"
+            Url = "https://refactoring.guru/design-patterns"
         };
 
          await navigate.Execute(GetDriver());

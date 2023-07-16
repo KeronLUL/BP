@@ -1,6 +1,7 @@
 ﻿@page "/config"
 @using System.Reflection
 @using System.Text.RegularExpressions
+@using System.Xml.XPath
 @using Microsoft.AspNetCore.Components
 @using MudBlazor.Utilities
 @using Newtonsoft.Json
@@ -87,12 +88,18 @@
     <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">@alertMessage</MudAlert>
 }
 
+@if (showAlertSucc)
+{
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Success" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMeSuccess">Configuration file saved to server</MudAlert>
+}
+
 <EditForm EditContext="@editContext">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <MudToolBar>
         <MudText Typo="Typo.h4">Configuration file builder</MudText>
         <MudSpacer />
+        <MudCheckBox Label="Save to server" Class="mr-3 mt-3" Color="Color.Primary" @bind-Checked="@saveServer"></MudCheckBox>
         <div class="btn-container">
             <MudFileUpload T="IBrowserFile" FilesChanged="LoadConfig">
                 <ButtonTemplate Context="fileContext">
@@ -102,6 +109,7 @@
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="HandleValidSubmit">Save config</MudButton>
         </div>
     </MudToolBar>
+    
     
     <MudItem>
         <div class="custom-label-container">
@@ -170,6 +178,8 @@
     private ValidationMessageStore? validationMessageStore;
     private int commandOrder = 1;
     private bool showAlert;
+    private bool saveServer = true;
+    private bool showAlertSucc;
     private string? alertMessage;
 
     protected override void OnInitialized()
@@ -182,6 +192,8 @@
     {
         dropItem.Item!.Selector = dropItem.DropzoneIdentifier;
         commandFields.UpdateOrder(dropItem, item => item.Order);
+        var newOrder = commandFields.OrderBy(x => x.Order).ToList();
+        commandFields = newOrder;
     }
     
     private void RefreshContainer()
@@ -200,6 +212,8 @@
     {
         commandFields.Add(new CommandField { Order = commandOrder, Name = string.Empty, Selector = "1", PropertyFields = new List<PropertyField>()});
         commandOrder++;
+        var newOrder = commandFields.OrderBy(x => x.Order).ToList();
+        commandFields = newOrder;
         RefreshContainer();
     }
 
@@ -218,6 +232,8 @@
     {
         command.Name = value;
         command.PropertyFields!.Clear();
+        var newOrder = commandFields.OrderBy(x => x.Order).ToList();
+        commandFields = newOrder;
         RefreshContainer();
     }
 
@@ -235,7 +251,7 @@
     {
         if (string.IsNullOrWhiteSpace(property.Value))
         {
-            if (property.Key == "Time")
+            if (property.Key!.ToLower() == "time")
             {
                 validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} must be valid number");
             }
@@ -246,7 +262,7 @@
             editContext.NotifyValidationStateChanged();
             return false;
         }
-        if (property.Key == "Time")
+        if (property.Key!.ToLower() == "time")
         {
             if (!int.TryParse(property.Value, out var value))
             {
@@ -262,15 +278,18 @@
                 return false;
             }
             
-        }else if(property.Key is "Path" or "Attribute")
+        }else if(property.Key!.ToLower() is "path" or "attribute")
         {
-            if (!Regex.IsMatch(property.Value, @"^(/?/?[\w-]+(:?/[\w-]+)*)*(\[@?\w+(\s*=\s*('.*?'|"".+?""|\w+))?\])*$"))
+            try 
+            {
+                XPathExpression.Compile(property.Value);
+            }
+            catch (XPathException)
             {
                 validationMessageStore!.Add(editContext!.Field(property.Id!), $@"Field value of property {property.Key} of command {command.Name} is not valid XPath");
                 editContext.NotifyValidationStateChanged();
                 return false;
             }
-            
         }
         return true;
     }
@@ -312,7 +331,7 @@
                     config.Commands.Clear();
                     return;
                 }
-                if (property.Key == "Time")
+                if (property.Key!.ToLower() == "time")
                 {
                     int.TryParse(property.Value, out var value);
                     config.Commands.Last().Args!.Add(property.Key!, value);
@@ -333,8 +352,26 @@
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             Formatting = Formatting.Indented
         };
-        
-        await JsRuntime.InvokeAsync<object>("saveFile", ConfigName is not (null or "") ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, serializerSettings));
+
+        if (saveServer)
+        {
+            var name = ConfigName ?? "config";
+            try
+            {
+                await using var sw = File.CreateText("../WebScraper/Configs/" + name + ".json");
+                await sw.WriteAsync(JsonConvert.SerializeObject(config, serializerSettings));
+                showAlertSucc = true;
+            }
+            catch (Exception)
+            {
+                showAlert = true;
+                alertMessage = "Failed to save config to server";
+            }
+        }
+        else
+        {
+            await JsRuntime.InvokeAsync<object>("saveFile", ConfigName is not (null or "") ? $"{ConfigName}.json" : "config.json", JsonConvert.SerializeObject(config, serializerSettings));
+        }
     }
 
     private void TransferData(Config newConfig)
@@ -365,6 +402,11 @@
         showAlert = false;
     }
     
+    private void CloseMeSuccess()
+    {
+        showAlertSucc = false;
+    }
+    
     private async Task LoadConfig(IBrowserFile file)
     {
         try
@@ -388,6 +430,7 @@
             var uploadedConfig = JsonConvert.DeserializeObject<Config>(fileContent);
             if (uploadedConfig != null)
             {
+                ConfigName = file.Name.Replace(".json", "");
                 TransferData(uploadedConfig);
             }
         }

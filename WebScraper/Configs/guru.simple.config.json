@@ -1,0 +1,36 @@
+{
+  "url": "https://refactoring.guru/",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='/design-patterns']"
+      }
+    },
+    {
+      "name": "SaveCssValue",
+      "args": {
+        "path": "//h1",
+        "property": "color",
+        "name": "Class"
+      }
+    },
+    {
+      "name": "SaveTagName",
+      "args": {
+        "path": "//h1",
+        "name": "Tag name"
+      }
+    },
+    {
+      "name": "ExecuteJavaScript",
+      "args": {
+        "name": "Script",
+        "script": "return \"Test\""
+      }
+    }
+  ]
+}

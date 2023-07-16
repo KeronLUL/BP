@@ -85,7 +85,7 @@ public static class Scraper
             {
                 var result = await ExecuteCommand(logger, command, driver);
 
-                if (command.GetType().Name.Contains("Save"))
+                if (command.GetType().Name.Contains("Save") || command.GetType().Name == "ExecuteJavaScript")
                 {
                     await SaveCommand(logger, command, elementFacade, website, result);
                 }

@@ -1,0 +1,117 @@
+{
+  "url": "https://www.selenium.dev/",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Maximize",
+      "args": {}
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//span[contains(text(),'Documentation')]"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "Forward",
+      "args": {}
+    },
+    {
+      "name": "Navigate",
+      "args": {
+        "url": "https://www.selenium.dev/"
+      }
+    },
+    {
+      "name": "ImplicitWait",
+      "args": {
+        "time": 10
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@id='navbarDropdown']"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='/about']"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "Refresh",
+      "args": {}
+    },
+    {
+      "name": "Forward",
+      "args": {}
+    },
+    {
+      "name": "WaitUntilClickable",
+      "args": {
+        "path": "//a[@href='/projects']",
+        "time": 10
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='/projects']"
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h2",
+        "name": "Header text"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "WaitUntilExists",
+      "args": {
+        "path": "//p[@class='lead mt-3 mb-0']",
+        "time": 10
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//p[@class='lead mt-3 mb-0']",
+        "name": "About text"
+      }
+    },
+    {
+      "name": "AddCookie",
+      "args": {
+        "key": "Key",
+        "value": "Value"
+      }
+    },
+    {
+      "name": "DeleteAllCookies",
+      "args": {}
+    },
+    {
+      "name": "SaveTitle",
+      "args": {
+        "name": "Title"
+      }
+    }
+  ]
+}

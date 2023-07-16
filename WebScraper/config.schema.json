@@ -161,11 +161,15 @@
               "args": {
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "type": "string"
+                  },
                   "script": {
                     "type": "string"
                   }
                 },
                 "required": [
+                  "name",
                   "script"
                 ]
               }
@@ -250,12 +254,12 @@
               "args": {
                 "type": "object",
                 "properties": {
-                  "path": {
+                  "url": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "path"
+                  "url"
                 ]
               }
             }

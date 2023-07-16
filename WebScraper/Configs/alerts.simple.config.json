@@ -1,0 +1,42 @@
+{
+  "url": "https://testpages.herokuapp.com/styled/alerts/alert-test.html",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Click",
+      "args": {
+        "path": "//input[@id='confirmexample']"
+      }
+    },
+    {
+      "name": "AcceptAlert",
+      "args": {}
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//p[@id='confirmreturn']",
+        "name": "Confirmation"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//input[@id='confirmexample']"
+      }
+    },
+    {
+      "name": "DismissAlert",
+      "args": {}
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//p[@id='confirmreturn']",
+        "name": "Confirmation"
+      }
+    }
+  ]
+}

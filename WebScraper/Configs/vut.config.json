@@ -1,0 +1,128 @@
+{
+  "url": "https://www.vut.cz/",
+  "loop": false,
+  "driver": "Chrome",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@id='f-search-trigger']"
+      }
+    },
+    {
+      "name": "SendKeys",
+      "args": {
+        "path": "//input[@id='f-search__search']",
+        "text": "IZP"
+      }
+    },
+    {
+      "name": "Submit",
+      "args": {
+        "path": "//input[@id='f-search__search']"
+      }
+    },
+    {
+      "name": "Maximize",
+      "args": {}
+    },
+    {
+      "name": "WaitUntilExists",
+      "args": {
+        "path": "//a[contains(text(),'Základy programování')]",
+        "time": 10000
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[contains(text(),'Základy programování')]"
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h1[@class='b-detail__title']",
+        "name": "Subject name"
+      }
+    },
+    {
+      "name": "Navigate",
+      "args": {
+        "url": "https://www.vut.cz/"
+      }
+    },
+    {
+      "name": "Maximize",
+      "args": {}
+    },
+    {
+      "name": "MoveToElement",
+      "args": {
+        "path": "//a[contains(text(),'Pro uchazeče')]"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='/studuj']"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='https://www.fit.vut.cz/applicants/.cs']"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "Forward",
+      "args": {}
+    },
+    {
+      "name": "Navigate",
+      "args": {
+        "url": "https://www.fit.vut.cz/applicants/.cs"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//span[@class='noat-cookie-consent-banner__allow']"
+      }
+    },
+    {
+      "name": "DeleteAllCookies",
+      "args": {}
+    },
+    {
+      "name": "Refresh",
+      "args": {}
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//span[@class='noat-cookie-consent-banner__allow']"
+      }
+    },
+    {
+      "name": "SaveText",
+      "args": {
+        "path": "//h1",
+        "name": "Header"
+      }
+    },
+    {
+      "name": "SaveCssValue",
+      "args": {
+        "path": "//h1",
+        "property": "color",
+        "name": "Header color"
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "url": "https://www.alza.cz/",
+  "loop": false,
+  "driver": "Firefox",
+  "waitTime": 0,
+  "commands": [
+    {
+      "name": "Maximize",
+      "args": {}
+    },
+    {
+      "name": "WaitUntilClickable",
+      "args": {
+        "path": "//a[@class='btnx cookies-info__button js-cookies-info-accept']",
+        "time": 100
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@class='btnx cookies-info__button js-cookies-info-accept']"
+      }
+    },
+    {
+      "name": "Click",
+      "args": {
+        "path": "//a[@href='/tv-foto-audio-video']"
+      }
+    },
+    {
+      "name": "WaitUntilClickable",
+      "args": {
+        "path": "//div[@id='alzaDialog']/div[2]",
+        "time": 100
+      }
+    },
+    {
+      "name": "Navigate",
+      "args": {
+        "url": "https://www.alza.cz/televize/18849604.htm"
+      }
+    },
+    {
+      "name": "Back",
+      "args": {}
+    },
+    {
+      "name": "Forward",
+      "args": {}
+    },
+    {
+      "name": "WaitUntilExists",
+      "args": {
+        "path": "//a[@id='ui-id-1']",
+        "time": 100
+      }
+    },
+    {
+      "name": "SaveAttribute",
+      "args": {
+        "path": "//a[@id='ui-id-1']",
+        "attribute": "href",
+        "name": "Href Attribute"
+      }
+    }
+  ]
+}

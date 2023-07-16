@@ -1,6 +1,5 @@
 ﻿@page "/"
 @page "/scraper"
-@using Newtonsoft.Json.Linq
 @using Newtonsoft.Json
 
 <style>
@@ -12,19 +11,42 @@
         text-align: center;
         margin-left: 15px;
     }    
+    
+    .btn-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .btn-container button {
+        margin: 0 5px;
+    }
 </style>
 
 @if (showAlert)
 {
     <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMe">@alertText</MudAlert>
 }
+@if (showAlertSucc)
+{
+    <MudAlert Variant="Variant.Filled" Severity="Severity.Success" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="CloseMeSuccess">Configuration file uploaded to server</MudAlert>
+}
 <MudPaper>
     <MudToolBar>
         <MudText Class="mt-3" Typo="Typo.h3">WebScraper</MudText>
         <MudSpacer />
+        <div class="btn-container">
+            <MudFileUpload T="IBrowserFile" FilesChanged="UploadConfig">
+                <ButtonTemplate Context="fileContext">
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" for="@fileContext" StartIcon="@Icons.Material.Filled.Upload">Upload config</MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </div>
     </MudToolBar>
     <MudText Class="ml-3 mt-3" Typo="Typo.h6">Configuration file:</MudText>
-    <MudSelect Class="ml-3 mb-3 mr-3" Placeholder="Select config file..." Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="@path">
+    <MudSelect Class="ml-3 mb-3 mr-3" T="string" Placeholder="Select config file..." Variant="Variant.Outlined" Value="@path"  ValueChanged="SelectionChanged" AnchorOrigin="Origin.BottomCenter">
         @foreach (var file in configFiles)
         {
             <MudSelectItem Value="@file">@file</MudSelectItem>
@@ -76,8 +98,8 @@
     private bool showAlert;
     private bool headless = true;
     private bool maximized;
+    private bool showAlertSucc;
     private TaskStatus status;
-    private Task? scraper;
 
     protected override void OnInitialized()
     {
@@ -85,6 +107,11 @@
         {
             configFiles.Add(Path.GetFileName(file));
         }
+    }
+    
+    private void CloseMeSuccess()
+    {
+        showAlertSucc = false;
     }
 
     private bool CheckConfig()
@@ -109,6 +136,12 @@
         
         alertText = "For running WebScraper in a loop, please run it from command line";
         return false;
+    }
+    
+    private void SelectionChanged(string value)
+    {
+        path = value;
+        StateHasChanged();
     }
 
     private async Task Run()
@@ -136,11 +169,12 @@
         {
             isProcessRunning = true;
 
-            scraper = Task.Run(async () =>
+            var scraper = Task.Run(async () =>
             {
                 await Program.Main(arguments);
+                
             });
-
+            
             while (scraper.Status != TaskStatus.RanToCompletion && scraper.Status != TaskStatus.Faulted)
             {
                 status = TaskStatus.Running;
@@ -149,16 +183,38 @@
 
             status = scraper.Status;
             isProcessRunning = false;
-
         }
+        
+        argumentList.Clear();
+        Array.Clear(arguments);
         StateHasChanged();
     }
 
-    private void Stop()
+    private async Task UploadConfig(IBrowserFile file)
     {
-        status = TaskStatus.Canceled;
-        isProcessRunning = false;
-        StateHasChanged();
+        try
+        {
+            var fileStream = file.OpenReadStream();
+
+            using var streamReader = new StreamReader(fileStream);
+            var fileContent = await streamReader.ReadToEndAsync();
+            
+            await using var sw = File.CreateText("../WebScraper/Configs/" + file.Name);
+            await sw.WriteAsync(fileContent);
+        }
+        catch (Exception)
+        {
+            alertText = "Failed to upload config file";
+            showAlert = true;
+        }
+
+        showAlertSucc = true;
+        
+        configFiles.Clear();
+        foreach (var config in Directory.GetFiles("../WebScraper/Configs"))
+        {
+            configFiles.Add(Path.GetFileName(config));
+        }
     }
     
     private void CloseMe()
