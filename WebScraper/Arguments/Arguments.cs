@@ -1,6 +1,4 @@
 ﻿using CommandLine;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace WebScraper.Arguments;
 

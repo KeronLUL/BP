@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebScraper.Json.Entities;
+﻿namespace WebScraper.Json.Entities;
 
 public class Config
 {
